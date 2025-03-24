@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Snackbar, Typography, IconButton } from '@mui/material';
+import { TextField, Button, Box, Snackbar, Typography, IconButton, Alert } from '@mui/material';
 import { useRequests } from 'src/utils/requests';
 import { Cliente } from 'src/models/Cliente';
-import { PhotoCamera } from '@mui/icons-material';
+import { Close, PhotoCamera } from '@mui/icons-material';
 import Navbar from 'src/components/Navbar/NavBar';
-import zIndex from '@mui/material/styles/zIndex';
 
 const AdicionarCliente = () => {
   const { addCliente } = useRequests();
@@ -22,54 +21,37 @@ const AdicionarCliente = () => {
     observacao: '',
   });
 
-  const [erros, setErros] = useState({
-    nome: '',
-    cpf_cnpj: '',
-    email: '',
-    telefone: '',
-    cep: '',
-    endereco: '',
-    bairro: '',
-    tipo: '',
-    status_cliente: '',
-  });
-
+  const [erros, setErros] = useState<Record<string, string>>({});
   const [infoMessage, setInfoMessage] = useState<string>('');
   const [abrirAviso, setAbrirAviso] = useState(false);
 
   const handleMudanca = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setClientData({ ...clientData, [name]: value });
+    setClientData((dados) => ({ ...dados, [name]: value }));
   };
 
-  const handleSubmit = async () => {
-    const novosErros = {
-      nome: clientData.nome ? '' : 'O nome é obrigatório.',
-      cpf_cnpj: clientData.cpf_cnpj ? '' : 'O CPF/CNPJ é obrigatório.',
-      email: clientData.email ? '' : 'O email é obrigatório.',
-      telefone: clientData.telefone ? '' : 'O telefone é obrigatório.',
-      cep: clientData.cep ? '' : 'O CEP é obrigatório.',
-      endereco: clientData.endereco ? '' : 'O endereço é obrigatório.',
-      bairro: clientData.bairro ? '' : 'O bairro é obrigatório.',
-      tipo: clientData.tipo ? '' : 'O tipo de cliente é obrigatório.',
-      status_cliente: clientData.status_cliente ? '' : 'O status do cliente é obrigatório.',
-    };
+  const handleEnviar = async () => {    
+    const novosErros: Record<string, string> = {};
+    const camposObrigatorios = ['nome', 'cpf_cnpj', 'email', 'telefone', 'cep', 'endereco', 'bairro', 'tipo', 'status_cliente'];
+
+    camposObrigatorios.forEach((campo) => {
+      if (!clientData[campo]) {
+        novosErros[campo] = `O campo ${campo.replace('_', ' ')} é obrigatório.`;
+      }
+    });
 
     setErros(novosErros);
 
-    const temErros = Object.values(novosErros).some((erro) => erro !== '');
-    if (temErros) {
+    if (Object.keys(novosErros).length > 0) {
       setInfoMessage('Por favor, preencha todos os campos obrigatórios.');
       setAbrirAviso(true);
       return;
     }
 
     try {
-      await addCliente(clientData);
+      const response = await addCliente(clientData);
       setInfoMessage('Cliente cadastrado com sucesso!');
       setAbrirAviso(true);
-
-      // Limpar o formulário
       setClientData({
         nome: '',
         cpf_cnpj: '',
@@ -82,23 +64,27 @@ const AdicionarCliente = () => {
         status_cliente: '',
         observacao: '',
       });
-      setErros({
-        nome: '',
-        cpf_cnpj: '',
-        email: '',
-        telefone: '',
-        cep: '',
-        endereco: '',
-        bairro: '',
-        tipo: '',
-        status_cliente: '',
-      });
+      setErros({});
     } catch (error) {
-      console.error('Erro ao cadastrar cliente:', error);
       setInfoMessage('Erro ao cadastrar cliente. Tente novamente.');
       setAbrirAviso(true);
     }
   };
+
+  const handleCancelar = () => {
+    setClientData({
+      nome: '',
+      cpf_cnpj: '',
+      email: '',
+      telefone: '',
+      cep: '',
+      endereco: '',
+      bairro: '',
+      tipo: '',
+      status_cliente: '',
+      observacao: '',
+    });
+  }
 
   const handleFecharAviso = () => {
     setAbrirAviso(false);
@@ -135,7 +121,7 @@ const AdicionarCliente = () => {
                 position: 'absolute',
                 top: '0',
                 left: '0',
-                width: '120px',
+                width: '140px',
                 backgroundColor: 'white',
                 fontSize: 130,
                 color: 'dimgray',
@@ -144,7 +130,7 @@ const AdicionarCliente = () => {
                 padding: '30px',
                 '&:hover': {
                   color: 'black',
-                  transition: 'color 0.7s ease',
+                  transition: 'color 1.0s ease',
                 },
               }}
             />
@@ -247,7 +233,7 @@ const AdicionarCliente = () => {
           <Typography sx={stylesAdd.observacoesLabel}>Observações</Typography>
           <TextField
             multiline
-            rows={4}
+            rows={7}
             name="observacao"
             value={clientData.observacao}
             onChange={handleMudanca}
@@ -255,26 +241,36 @@ const AdicionarCliente = () => {
           />
         </Box>
         <Typography sx={stylesAdd.buttons}>
-          <Button variant="contained" color="success" onClick={handleSubmit}>
+          <Button variant="contained" color="success" onClick={handleEnviar}>
             Adicionar
           </Button>
-          <Button variant="outlined" color="error" >
+          <Button variant="contained" color="error" onClick={handleCancelar}>
             Cancelar
           </Button>
         </Typography>
       </Box>
 
-      {/* <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
-        {error ? (
-          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-            {error}
-          </Alert>
-        ) : (
-          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-            {success}
-          </Alert>
-        )}
-      </Snackbar> */}
+      <Snackbar
+        open={abrirAviso}
+        autoHideDuration={3000}
+        onClose={handleFecharAviso}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} 
+        message={infoMessage}
+        ContentProps={{
+          sx: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            bgcolor: infoMessage === 'Cliente cadastrado com sucesso!' ? 'green' : 'red',
+            color: 'white',
+            textAlign: 'center',
+            width: '100%',
+            '& .MuiSnackbarContent-message': {
+              width: 'inherit',
+              textAlign: 'center'
+            }
+          }
+        }}
+      />    
     </Box>
   );
 };
@@ -348,7 +344,7 @@ const stylesAdd = {
   },
   formGroup: {
     flex: '1 1 calc(33.333% - 10px)',
-    minWidth: '275px',
+    minWidth: '375px',
     backgroundColor: 'white',
     border: '3px solid gainsboro',
     borderRadius: '5px',

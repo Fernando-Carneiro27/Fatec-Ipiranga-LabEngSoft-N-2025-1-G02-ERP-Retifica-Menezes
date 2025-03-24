@@ -15,7 +15,7 @@ const AppRouter: React.FC = () => {
         <Route path="/" element={<LogIn />} />
         <Route path="/redefinir-senha" element={<EsqueciSenha />} />
         {/* <Route path="/clientes" element={<ListaCliente />} />*/} 
-        <Route path="/clientes-add" element={<AdicionarCliente />} /> 
+        <Route path="/cliente-add" element={<AdicionarCliente />} /> 
         {/*<Route path="/clientes/edit/:id" element={<EditarCliente />} />*/}
       </Routes>
     </Router>

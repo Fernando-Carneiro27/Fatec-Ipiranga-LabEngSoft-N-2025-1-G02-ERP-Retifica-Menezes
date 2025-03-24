@@ -24,7 +24,7 @@ const EsqueciSenha = () => {
         navigate('/');
       }, 2000);
 
-    } if (novaSenha !== confirmarSenha) {
+    } if (novaSenha !== confirmarSenha || novaSenha === '') {
       setInfoMessage('As senhas não coincidem');
       setAbrirAviso(true);
 
@@ -39,7 +39,16 @@ const EsqueciSenha = () => {
       setUsuario('');
       setNovaSenha('');
       setConfirmarSenha('');
+      
+    } if (usuario === '' || novaSenha === '' || confirmarSenha === '') {
+      setInfoMessage('Todos os campos precisam ser preenchidos');
+      setAbrirAviso(true);
+
+      setUsuario('');
+      setNovaSenha('');
+      setConfirmarSenha('');
     }
+
   };
 
   const handleFecharAviso = () => {

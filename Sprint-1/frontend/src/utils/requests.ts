@@ -14,7 +14,7 @@ const getClientes = async () => {
 
 const getAnCliente = async (id: number) => {
     try{
-        const response = await useApi<ApiGetCliente>(`clientes/clientes/${id}`);
+        const response = await useApi<ApiGetCliente>(`clientes/cliente/${id}`);
         return response;
     } catch (error) {
         console.error("Erro ao buscar cliente: ", error);
@@ -24,17 +24,17 @@ const getAnCliente = async (id: number) => {
     }
 
 const addCliente = async (data: Cliente) => {
-    const response = await useApi('clientes/clientes', 'POST', data);
+    const response = await useApi('clientes', 'POST', data);
     return response;
 };
 
-const editCliente = async (data: ClienteUpdate) => {
-    const response = await useApi('clientes/clientes', 'PUT', data);
+const editCliente = async (id: number, data: ClienteUpdate) => {
+    const response = await useApi(`clientes/${id}`, 'PUT', data);
     return response;
 }
 
 const deleteCliente = async (id: number) => {
-    const response = await useApi(`clientes/clientes/${id}`, 'DELETE');
+    const response = await useApi(`clientes/${id}`, 'DELETE');
     return response;
 }
 

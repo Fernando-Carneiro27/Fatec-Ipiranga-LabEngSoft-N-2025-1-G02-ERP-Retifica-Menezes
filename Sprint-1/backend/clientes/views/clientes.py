@@ -23,8 +23,6 @@ class Clientes(BaseView):
         return Response({"success": False, "errors": serializer.errors})
 
 
-
-
 class ClienteDetail(BaseView):
 
     def get(self, request, cliente_id):
