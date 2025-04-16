@@ -3,6 +3,7 @@ import { TextField, Button, Box, Typography, Link, Snackbar } from '@mui/materia
 import Logo from 'public/img/logoesquecisenha.jpg';
 
 import { useNavigate } from 'react-router-dom';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 const EsqueciSenha = () => {
   const [usuario, setUsuario] = useState('');
@@ -56,96 +57,101 @@ const EsqueciSenha = () => {
   };
 
   return (
-    <Box sx={stylesRedefinir.body}>
-      <Snackbar
-        open={abrirAviso}
-        onClose={handleFecharAviso}
-        autoHideDuration={2000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        message={infoMessage}
-        ContentProps={{
-          sx: {
-            bgcolor:
-              infoMessage === 'Redefinição de senha feita com sucesso' ? 'green' : 'red',
-            color: 'white',
-            textAlign: 'center',
-            width: '100%',
-            '& .MuiSnackbarContent-message': {
-              width: 'inherit',
-              textAlign: 'center'
+    <HelmetProvider>
+      <Helmet>
+        <title>Redefinir Senha</title>
+      </Helmet>
+      <Box sx={stylesRedefinir.body}>
+        <Snackbar
+          open={abrirAviso}
+          onClose={handleFecharAviso}
+          autoHideDuration={2000}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          message={infoMessage}
+          ContentProps={{
+            sx: {
+              bgcolor:
+                infoMessage === 'Redefinição de senha feita com sucesso' ? 'green' : 'red',
+              color: 'white',
+              textAlign: 'center',
+              width: '100%',
+              '& .MuiSnackbarContent-message': {
+                width: 'inherit',
+                textAlign: 'center'
+              }
             }
-          }
-        }}
-      />
-      <Box sx={stylesRedefinir.containerEsqueciSenha}>
-        <Box
-          component="img"
-          src="/img/logoesquecisenha.jpg"
-          alt="Logo RMENEZES"
-          sx={stylesRedefinir.logo}
+          }}
         />
-        <Typography sx={stylesRedefinir.tituloEsqueciSenha}>
-          Redefina sua senha
-        </Typography>
-        <Typography sx={stylesRedefinir.descricao}>
-          Insira um nome de usuário válido e a nova senha.
-        </Typography>
-        <Box sx={stylesRedefinir.formularioEsqueciSenha}>
-          <TextField
-            fullWidth
-            label="Usuário"
-            variant="outlined"
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-            required
-            sx={stylesRedefinir.campoInput}
-            InputLabelProps={{
-              sx: stylesRedefinir.labelInput
-            }}
+        <Box sx={stylesRedefinir.containerEsqueciSenha}>
+          <Box
+            component="img"
+            src="/img/logoesquecisenha.jpg"
+            alt="Logo RMENEZES"
+            sx={stylesRedefinir.logo}
           />
-          <TextField
-            fullWidth
-            label="Nova senha"
-            type="password"
-            variant="outlined"
-            value={novaSenha}
-            onChange={(e) => setNovaSenha(e.target.value)}
-            required
-            sx={stylesRedefinir.campoInput}
-            InputLabelProps={{
-              sx: stylesRedefinir.labelInput
-            }}
-          />
-          <TextField
-            fullWidth
-            label="Confirmar nova senha"
-            type="password"
-            variant="outlined"
-            value={confirmarSenha}
-            onChange={(e) => setConfirmarSenha(e.target.value)}
-            required
-            sx={stylesRedefinir.campoInput}
-            InputLabelProps={{
-              sx: stylesRedefinir.labelInput
-            }}
-          />
-          <Typography sx={stylesRedefinir.opcoesEsqueciSenha}>
-            <Link href="/" sx={stylesRedefinir.linkVoltar}>
-              Voltar
-            </Link>
+          <Typography sx={stylesRedefinir.tituloEsqueciSenha}>
+            Redefina sua senha
           </Typography>
-          <Button
-            type="submit"
-            sx={stylesRedefinir.botaoRedefinirSenha}
-            variant="contained"
-            onClick={handleEnviar}
-            fullWidth
-          >
-            Redefinir senha
-          </Button>
+          <Typography sx={stylesRedefinir.descricao}>
+            Insira um nome de usuário válido e a nova senha.
+          </Typography>
+          <Box sx={stylesRedefinir.formularioEsqueciSenha}>
+            <TextField
+              fullWidth
+              label="Usuário"
+              variant="outlined"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              required
+              sx={stylesRedefinir.campoInput}
+              InputLabelProps={{
+                sx: stylesRedefinir.labelInput
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Nova senha"
+              type="password"
+              variant="outlined"
+              value={novaSenha}
+              onChange={(e) => setNovaSenha(e.target.value)}
+              required
+              sx={stylesRedefinir.campoInput}
+              InputLabelProps={{
+                sx: stylesRedefinir.labelInput
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Confirmar nova senha"
+              type="password"
+              variant="outlined"
+              value={confirmarSenha}
+              onChange={(e) => setConfirmarSenha(e.target.value)}
+              required
+              sx={stylesRedefinir.campoInput}
+              InputLabelProps={{
+                sx: stylesRedefinir.labelInput
+              }}
+            />
+            <Typography sx={stylesRedefinir.opcoesEsqueciSenha}>
+              <Link href="/" sx={stylesRedefinir.linkVoltar}>
+                Voltar
+              </Link>
+            </Typography>
+            <Button
+              type="submit"
+              sx={stylesRedefinir.botaoRedefinirSenha}
+              variant="contained"
+              onClick={handleEnviar}
+              fullWidth
+            >
+              Redefinir senha
+            </Button>
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </HelmetProvider>
   );
 };
 

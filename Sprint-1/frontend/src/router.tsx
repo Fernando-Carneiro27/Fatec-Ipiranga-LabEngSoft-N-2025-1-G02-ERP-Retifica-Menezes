@@ -5,7 +5,7 @@ import LogIn from './content/pages/Auth/LogIn';
 // import ClientDetail from './content/pages/Clients/ClientDetail'; 
 import AdicionarCliente from './content/pages/Clientes/AddCliente';
 import EsqueciSenha from './content/pages/Auth/Esqueci/Senha';
-// import ClientEdit from './content/pages/Clients/ClientEdit'; 
+import EditarCliente from './content/pages/Clientes/EditCliente'; 
 
 
 const AppRouter: React.FC = () => {
@@ -16,7 +16,7 @@ const AppRouter: React.FC = () => {
         <Route path="/redefinir-senha" element={<EsqueciSenha />} />
         {/* <Route path="/clientes" element={<ListaCliente />} />*/} 
         <Route path="/cliente-add" element={<AdicionarCliente />} /> 
-        {/*<Route path="/clientes/edit/:id" element={<EditarCliente />} />*/}
+        <Route path="/cliente/edit/:id" element={<EditarCliente />} />
       </Routes>
     </Router>
   );

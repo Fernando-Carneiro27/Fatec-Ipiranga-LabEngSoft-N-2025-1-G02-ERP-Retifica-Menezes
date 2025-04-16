@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8000/tcc";
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/tcc";
 
 export const useApi = async <TypeDataResponse>(
     endpoint: string,

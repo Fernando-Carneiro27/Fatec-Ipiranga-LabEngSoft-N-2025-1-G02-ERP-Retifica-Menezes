@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { Person, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 const LogIn = () => {
     const [mostrarSenha, setMostrarSenha] = useState<boolean>(false);
@@ -34,7 +35,7 @@ const LogIn = () => {
             (true);
 
             setTimeout(() => {
-                navigate('/clientes');
+                navigate('/cliente-add');
             }, 2000);
         } else {
             setInfoMessage('Usuário ou senha incorreto(s)');
@@ -49,90 +50,95 @@ const LogIn = () => {
     };
 
     return (
-        <Box sx={stylesLogin.body}>
-            <Box sx={stylesLogin.containerLogin}>
-            <Snackbar
-                open={abrirAviso}
-                onClose={handleFecharAviso}
-                autoHideDuration={2000} 
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                message={infoMessage}
-                ContentProps={{
-                    sx: {
-                        bgcolor: infoMessage === 'Login feito com sucesso!' ? 'green' : 'red',
-                        color: 'white',
-                        textAlign: 'center',
-                        width: '100%',
-                        '& .MuiSnackbarContent-message': {
-                            width: 'inherit',
+        <HelmetProvider>
+            <Helmet>
+                <title>Login</title>
+            </Helmet>
+            <Box sx={stylesLogin.body}>
+                <Box sx={stylesLogin.containerLogin}>
+                <Snackbar
+                    open={abrirAviso}
+                    onClose={handleFecharAviso}
+                    autoHideDuration={2000} 
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    message={infoMessage}
+                    ContentProps={{
+                        sx: {
+                            bgcolor: infoMessage === 'Login feito com sucesso!' ? 'green' : 'red',
+                            color: 'white',
                             textAlign: 'center',
+                            width: '100%',
+                            '& .MuiSnackbarContent-message': {
+                                width: 'inherit',
+                                textAlign: 'center',
+                            },
                         },
-                    },
-                }}
-            />
-            <Typography sx={stylesLogin.tituloLogin}>
-                LOGIN
-            </Typography>
-            <Box sx={stylesLogin.formularioLogin} onSubmit={handleEnviar}>
-                <Typography sx={stylesLogin.campoInput}>
-                    <TextField
+                    }}
+                />
+                <Typography sx={stylesLogin.tituloLogin}>
+                    LOGIN
+                </Typography>
+                <Box sx={stylesLogin.formularioLogin} onSubmit={handleEnviar}>
+                    <Typography sx={stylesLogin.campoInput}>
+                        <TextField
+                            fullWidth
+                            placeholder="Usuário"
+                            variant="outlined"
+                            value={usuario}
+                            onChange={(e) => setUsuario(e.target.value)}
+                            required
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position='start'>
+                                        <Person />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </Typography>
+                    <Typography sx={stylesLogin.campoInput}>
+                        <TextField
+                            fullWidth
+                            placeholder="Senha"
+                            type={mostrarSenha ? 'text' : 'password'}
+                            variant="outlined"
+                            value={senha}
+                            onChange={(e) => setSenha(e.target.value)}
+                            required
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position='start'>
+                                        <Lock />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={alternarMostrarSenha} edge="end">
+                                            {mostrarSenha ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </Typography>
+                    <Typography sx={stylesLogin.opcoesLogin}>
+                        <Button 
+                            sx={stylesLogin.opcoesLoginButton} 
+                            onClick={() => navigate('/redefinir-senha')}>Esqueci minha senha</Button>
+                    </Typography>
+                    <Button
+                        type="submit"
+                        sx={stylesLogin.botaoEntrar}
+                        style={{ backgroundColor: '#004b73', color: 'white' }}
+                        onClick={handleEnviar}
                         fullWidth
-                        placeholder="Usuário"
-                        variant="outlined"
-                        value={usuario}
-                        onChange={(e) => setUsuario(e.target.value)}
-                        required
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position='start'>
-                                    <Person />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                </Typography>
-                <Typography sx={stylesLogin.campoInput}>
-                    <TextField
-                        fullWidth
-                        placeholder="Senha"
-                        type={mostrarSenha ? 'text' : 'password'}
-                        variant="outlined"
-                        value={senha}
-                        onChange={(e) => setSenha(e.target.value)}
-                        required
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position='start'>
-                                    <Lock />
-                                </InputAdornment>
-                            ),
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={alternarMostrarSenha} edge="end">
-                                        {mostrarSenha ? <Visibility /> : <VisibilityOff />}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                </Typography>
-                <Typography sx={stylesLogin.opcoesLogin}>
-                    <Button 
-                        sx={stylesLogin.opcoesLoginButton} 
-                        onClick={() => navigate('/redefinir-senha')}>Esqueci minha senha</Button>
-                </Typography>
-                <Button
-                    type="submit"
-                    sx={stylesLogin.botaoEntrar}
-                    style={{ backgroundColor: '#004b73', color: 'white' }}
-                    onClick={handleEnviar}
-                    fullWidth
-                >
-                    Entrar
-                </Button>
+                    >
+                        Entrar
+                    </Button>
+                </Box>
             </Box>
-        </Box>
-    </Box>
+            </Box>
+        </HelmetProvider>
     );
 };
 

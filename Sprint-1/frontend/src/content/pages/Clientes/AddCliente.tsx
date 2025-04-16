@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Snackbar, Typography, IconButton, Alert } from '@mui/material';
+import { TextField, Button, Box, Snackbar, Typography, IconButton } from '@mui/material';
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useRequests } from 'src/utils/requests';
 import { Cliente } from 'src/models/Cliente';
-import { Close, PhotoCamera } from '@mui/icons-material';
+import { PhotoCamera } from '@mui/icons-material';
 import Navbar from 'src/components/Navbar/NavBar';
 
 const AdicionarCliente = () => {
@@ -91,187 +92,192 @@ const AdicionarCliente = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: '100%', overflow: 'hidden', fontFamily: 'arial', paddingTop: '103px' }}>
-      <Navbar />
-      <Box sx={stylesAdd.headerCliente}>
-        <Box
-          component="img"
-          src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png"
-          alt="Ícone Cliente"
-          sx={stylesAdd.headerClienteImg}
-        />
-        <Typography sx={stylesAdd.headerClienteSpan}>Clientes - Adicionar</Typography>
-      </Box>
-
-      <Box sx={stylesAdd.dadosCliente}>
-        <Box
-          component="img"
-          src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png"
-          alt="Editar"
-          sx={stylesAdd.dadosClienteImg}
-        />
-          Dados Cliente
-      </Box>
-
-      <Box sx={stylesAdd.grayContainer}>
-        <Typography sx={stylesAdd.photoContainer}>
-          <IconButton title="Adicionar foto de um cliente">
-            <PhotoCamera
-              sx={{
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                width: '140px',
-                backgroundColor: 'white',
-                fontSize: 130,
-                color: 'dimgray',
-                border: '2px solid silver',
-                borderRadius: '10px',
-                padding: '30px',
-                '&:hover': {
-                  color: 'black',
-                  transition: 'color 1.0s ease',
-                },
-              }}
+    <HelmetProvider>
+      <Helmet>
+        <title>Adicionar Cliente</title>
+      </Helmet>
+      <Box sx={{ maxWidth: '100%', overflow: 'hidden', fontFamily: 'arial', paddingTop: '103px' }}>
+        <Navbar />
+        <Box sx={stylesAdd.headerCliente}>
+          <Box
+            component="img"
+            src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png"
+            alt="Ícone Cliente"
+            sx={stylesAdd.headerClienteImg}
             />
-          </IconButton>
-        </Typography>
-
-        <Box sx={stylesAdd.formContainer}>
-          <TextField
-            label="Nome *"
-            variant="outlined"
-            fullWidth
-            name="nome"
-            value={clientData.nome}
-            onChange={handleMudanca}
-            sx={stylesAdd.formGroup}
-          />
-          <TextField
-            label="CPF / CNPJ *"
-            variant="outlined"
-            fullWidth
-            name="cpf_cnpj"
-            value={clientData.cpf_cnpj}
-            onChange={handleMudanca}
-            sx={stylesAdd.formGroup}
-          />
-          <TextField
-            label="Email *"
-            variant="outlined"
-            fullWidth
-            name="email"
-            value={clientData.email}
-            onChange={handleMudanca}
-            sx={stylesAdd.formGroup}
-          />
+          <Typography sx={stylesAdd.headerClienteSpan}>Clientes - Adicionar</Typography>
         </Box>
 
-        <Box sx={stylesAdd.formContainer}>
-          <TextField
-            label="Celular *"
-            variant="outlined"
-            fullWidth
-            name="telefone"
-            value={clientData.telefone}
-            onChange={handleMudanca}
-            sx={stylesAdd.formGroup}
-          />
-          <TextField
-            label="CEP *"
-            variant="outlined"
-            fullWidth
-            name="cep"
-            value={clientData.cep}
-            onChange={handleMudanca}
-            sx={stylesAdd.formGroup}
-          />
-          <TextField
-            label="Endereço *"
-            variant="outlined"
-            fullWidth
-            name="endereco"
-            value={clientData.endereco}
-            onChange={handleMudanca}
-            sx={stylesAdd.formGroup}
-          />
+        <Box sx={stylesAdd.dadosCliente}>
+          <Box
+            component="img"
+            src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png"
+            alt="Editar"
+            sx={stylesAdd.dadosClienteImg}
+            />
+            Dados Cliente
         </Box>
 
-        <Box sx={stylesAdd.formContainer}>
-          <TextField
-            label="Bairro *"
-            variant="outlined"
-            fullWidth
-            name="bairro"
-            value={clientData.bairro}
-            onChange={handleMudanca}
-            sx={stylesAdd.formGroup}
-          />
-          <TextField
-            label="Tipo de Cliente *"
-            variant="outlined"
-            fullWidth
-            name="tipo"
-            value={clientData.tipo}
-            onChange={handleMudanca}
-            sx={stylesAdd.formGroup}
-          />
-          <TextField
-            label="Status Cliente *"
-            variant="outlined"
-            fullWidth
-            name="status_cliente"
-            value={clientData.status_cliente}
-            onChange={handleMudanca}
-            sx={stylesAdd.formGroup}
-          />
-        </Box>
-      </Box>
+        <Box sx={stylesAdd.grayContainer}>
+          <Typography sx={stylesAdd.photoContainer}>
+            <IconButton title="Adicionar foto de um cliente">
+              <PhotoCamera
+                sx={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '140px',
+                  backgroundColor: 'white',
+                  fontSize: 130,
+                  color: 'dimgray',
+                  border: '2px solid silver',
+                  borderRadius: '10px',
+                  padding: '30px',
+                  '&:hover': {
+                    color: 'black',
+                    transition: 'color 1.0s ease',
+                  },
+                }}
+                />
+            </IconButton>
+          </Typography>
 
-      <Box sx={{ display: 'flex', alignItems: 'flex-end', marginTop: '20px' }}>
-        <Box sx={{ padding: '30px', borderRadius: '8px', width: '100%' }}>
-          <Typography sx={stylesAdd.observacoesLabel}>Observações</Typography>
-          <TextField
-            multiline
-            rows={7}
-            name="observacao"
-            value={clientData.observacao}
-            onChange={handleMudanca}
-            sx={stylesAdd.observacoesInput}
-          />
-        </Box>
-        <Typography sx={stylesAdd.buttons}>
-          <Button variant="contained" color="success" onClick={handleEnviar}>
-            Adicionar
-          </Button>
-          <Button variant="contained" color="error" onClick={handleCancelar}>
-            Cancelar
-          </Button>
-        </Typography>
-      </Box>
+          <Box sx={stylesAdd.formContainer}>
+            <TextField
+              label="Nome *"
+              variant="outlined"
+              fullWidth
+              name="nome"
+              value={clientData.nome}
+              onChange={handleMudanca}
+              sx={stylesAdd.formGroup}
+              />
+            <TextField
+              label="CPF / CNPJ *"
+              variant="outlined"
+              fullWidth
+              name="cpf_cnpj"
+              value={clientData.cpf_cnpj}
+              onChange={handleMudanca}
+              sx={stylesAdd.formGroup}
+              />
+            <TextField
+              label="Email *"
+              variant="outlined"
+              fullWidth
+              name="email"
+              value={clientData.email}
+              onChange={handleMudanca}
+              sx={stylesAdd.formGroup}
+              />
+          </Box>
 
-      <Snackbar
-        open={abrirAviso}
-        autoHideDuration={3000}
-        onClose={handleFecharAviso}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} 
-        message={infoMessage}
-        ContentProps={{
-          sx: {
-            alignItems: 'center',
-            justifyContent: 'center',
-            bgcolor: infoMessage === 'Cliente cadastrado com sucesso!' ? 'green' : 'red',
-            color: 'white',
-            textAlign: 'center',
-            width: '100%',
-            '& .MuiSnackbarContent-message': {
-              width: 'inherit',
-              textAlign: 'center'
+          <Box sx={stylesAdd.formContainer}>
+            <TextField
+              label="Celular *"
+              variant="outlined"
+              fullWidth
+              name="telefone"
+              value={clientData.telefone}
+              onChange={handleMudanca}
+              sx={stylesAdd.formGroup}
+              />
+            <TextField
+              label="CEP *"
+              variant="outlined"
+              fullWidth
+              name="cep"
+              value={clientData.cep}
+              onChange={handleMudanca}
+              sx={stylesAdd.formGroup}
+              />
+            <TextField
+              label="Endereço *"
+              variant="outlined"
+              fullWidth
+              name="endereco"
+              value={clientData.endereco}
+              onChange={handleMudanca}
+              sx={stylesAdd.formGroup}
+              />
+          </Box>
+
+          <Box sx={stylesAdd.formContainer}>
+            <TextField
+              label="Bairro *"
+              variant="outlined"
+              fullWidth
+              name="bairro"
+              value={clientData.bairro}
+              onChange={handleMudanca}
+              sx={stylesAdd.formGroup}
+              />
+            <TextField
+              label="Tipo de Cliente *"
+              variant="outlined"
+              fullWidth
+              name="tipo"
+              value={clientData.tipo}
+              onChange={handleMudanca}
+              sx={stylesAdd.formGroup}
+              />
+            <TextField
+              label="Status Cliente *"
+              variant="outlined"
+              fullWidth
+              name="status_cliente"
+              value={clientData.status_cliente}
+              onChange={handleMudanca}
+              sx={stylesAdd.formGroup}
+              />
+          </Box>
+        </Box>
+
+        <Box sx={{ display: 'flex', alignItems: 'flex-end', marginTop: '20px' }}>
+          <Box sx={{ padding: '30px', borderRadius: '8px', width: '100%' }}>
+            <Typography sx={stylesAdd.observacoesLabel}>Observações</Typography>
+            <TextField
+              multiline
+              rows={7}
+              name="observacao"
+              value={clientData.observacao}
+              onChange={handleMudanca}
+              sx={stylesAdd.observacoesInput}
+              />
+          </Box>
+          <Typography sx={stylesAdd.buttons}>
+            <Button variant="contained" color="success" onClick={handleEnviar}>
+              Adicionar
+            </Button>
+            <Button variant="contained" color="error" onClick={handleCancelar}>
+              Cancelar
+            </Button>
+          </Typography>
+        </Box>
+
+        <Snackbar
+          open={abrirAviso}
+          autoHideDuration={3000}
+          onClose={handleFecharAviso}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }} 
+          message={infoMessage}
+          ContentProps={{
+            sx: {
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: infoMessage === 'Cliente cadastrado com sucesso!' ? 'green' : 'red',
+              color: 'white',
+              textAlign: 'center',
+              width: '100%',
+              '& .MuiSnackbarContent-message': {
+                width: 'inherit',
+                textAlign: 'center'
+              }
             }
-          }
-        }}
-      />    
-    </Box>
+          }}
+        />    
+      </Box>
+    </HelmetProvider> 
   );
 };
 
@@ -303,6 +309,7 @@ const stylesAdd = {
     fontWeight: 'normal',
   },
   dadosCliente: {
+    margin: '15px 0 5px 0',
     display: 'flex',
     alignItems: 'center',
     gap: '10px',

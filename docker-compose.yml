@@ -1,39 +1,51 @@
 version: '3.8'
 
 services:
-  db:
+  mariadb:
     image: mariadb:10.6
+    container_name: mariadb_container
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tcc
+      MYSQL_DATABASE: retifica
       MYSQL_USER: root
-      MYSQL_PASSWORD: 1234 
+      MYSQL_PASSWORD: 1234
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - rede_docker
 
   backend:
-    build: ./Sprint-1/backend
+    build: ./Sprint-2/backend
+    container_name: sprint2-backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./Sprint-1/backend:/backend
     depends_on:
-      - db
+      - mariadb
     environment:
-      - DOCKERIZED=1
-      
+      DB_NAME: retifica
+      DB_USER: root
+      DB_PASSWORD: 1234
+      DB_HOST: mariadb
+      DB_PORT: 3306
+    networks:
+      - rede_docker
 
   frontend:
-    build: ./Sprint-1/frontend
+    build: ./Sprint-2/frontend
+    container_name: sprint2-frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./Sprint-1/frontend:/frontend
     depends_on:
       - backend
+    networks:
+      - rede_docker
 
 volumes:
-  db_data:
+  mariadb_data:
+
+networks:
+  rede_docker:
+    driver: bridge
