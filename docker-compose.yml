@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mariadb:
@@ -8,8 +8,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: retifica
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 1234
     ports:
       - "3306:3306"
     volumes:
@@ -18,8 +16,8 @@ services:
       - rede_docker
 
   backend:
-    build: ./Sprint-2/backend
-    container_name: sprint2-backend
+    build: ./Sprint-3/backend
+    container_name: sprint3-backend
     ports:
       - "8000:8000"
     depends_on:
@@ -27,15 +25,15 @@ services:
     environment:
       DB_NAME: retifica
       DB_USER: root
-      DB_PASSWORD: 1234
+      DB_PASSWORD: root
       DB_HOST: mariadb
       DB_PORT: 3306
     networks:
       - rede_docker
 
   frontend:
-    build: ./Sprint-2/frontend
-    container_name: sprint2-frontend
+    build: ./Sprint-3/frontend
+    container_name: sprint3-frontend
     ports:
       - "3000:3000"
     depends_on:
