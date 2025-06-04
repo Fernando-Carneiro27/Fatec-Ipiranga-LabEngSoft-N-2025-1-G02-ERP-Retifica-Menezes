@@ -275,7 +275,7 @@ const ListarVendas = () => {
             <AddCircleOutlineTwoTone
               sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }}
             />
-            Adicionar
+            Registrar
           </Button>
           <Button
             variant="contained"
@@ -438,7 +438,7 @@ const ListarVendas = () => {
                           key={`${venda.id}-${venda.tipo}-${venda.data}`}
                           sx={{
                             backgroundColor:
-                              venda.tipo === 'servico' ? 'white' : '#F0F8FF'
+                              venda.tipo === 'servico' ? 'white' : '#B0E0E6'
                           }}
                         >
                           {colunasVisiveis.id && (

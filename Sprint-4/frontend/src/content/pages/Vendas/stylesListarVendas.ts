@@ -136,7 +136,7 @@ const stylesLista = {
   legendaProduto: {
     width: 24,
     height: 24,
-    backgroundColor: '#F0F8FF',
+    backgroundColor: '#B0E0E6',
     border: '2px solid black'
   },
   cores: {

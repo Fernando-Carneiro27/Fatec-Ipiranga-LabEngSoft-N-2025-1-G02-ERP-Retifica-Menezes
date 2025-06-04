@@ -95,20 +95,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         # rodar na máquina configurada
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'retifica',
-        'USER': 'root',
-        'PASSWORD': '1234',
-        'HOST': 'localhost', 
-        'PORT': '3306', 
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'retifica',
+        # 'USER': 'root',
+        # 'PASSWORD': '1234',
+        # 'HOST': 'localhost', 
+        # 'PORT': '3306', 
 
         # rodar no docker
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': os.getenv('DB_NAME', 'retifica'),
-        # 'USER': os.getenv('DB_USER', 'root'),
-        # 'PASSWORD': os.getenv('DB_PASSWORD', 'root'),
-        # 'HOST': os.getenv('DB_HOST', 'mariadb'),
-        # 'PORT': os.getenv('DB_PORT', '3306'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'retifica'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'root'),
+        'HOST': os.getenv('DB_HOST', 'mariadb'),
+        'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
 

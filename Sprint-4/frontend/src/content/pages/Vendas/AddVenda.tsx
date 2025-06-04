@@ -445,7 +445,7 @@ const AdicionarVenda = () => {
         <Box sx={stylesAdd.contPrincipal}>
           <Box sx={stylesAdd.grayContainer}>
             <TextField
-              label="Código *"
+              label="Código do cliente"
               variant="outlined"
               fullWidth
               name="cliente_codigo"
@@ -483,7 +483,7 @@ const AdicionarVenda = () => {
               )}
             />
             <Autocomplete
-              options={['Pendente', 'Em andamento', 'Pago']}
+              options={['Entregue', 'Em andamento', 'Cancelada']}
               value={vendaServicoData.situacao_venda}
               onChange={(event, newValue) => {
                 setVendaServicoData((prev) => ({
@@ -646,7 +646,7 @@ const AdicionarVenda = () => {
                         )}
                       />
                       <TextField
-                        label="Observação"
+                        label="Observação do serviço"
                         variant="outlined"
                         disabled
                         fullWidth
@@ -865,7 +865,7 @@ const AdicionarVenda = () => {
                       />
 
                       <TextField
-                        label="Observação"
+                        label="Observação do produto"
                         variant="outlined"
                         disabled
                         fullWidth
@@ -1054,7 +1054,7 @@ const AdicionarVenda = () => {
               )}
             />
             <TextField
-              label="Observação"
+              label="Observação da venda"
               variant="outlined"
               disabled={desabilitarCampos}
               fullWidth
@@ -1067,7 +1067,7 @@ const AdicionarVenda = () => {
               sx={stylesAdd.formGroup}
             />
             <Autocomplete
-              options={['Pendente', 'Pago', 'Cancelado']}
+              options={['Pendente', 'Pago']}
               value={vendaServicoData.status_pagamento}
               onChange={(_, newValue) => {
                 setVendaServicoData((prev) => ({
@@ -1146,7 +1146,7 @@ const AdicionarVenda = () => {
                 }
               }}
             >
-              Adicionar
+              Registrar
             </Button>
             <Button variant="contained" color="error" onClick={handleCancelar}>
               Cancelar
