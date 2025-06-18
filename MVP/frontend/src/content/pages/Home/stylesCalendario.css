@@ -1,0 +1,66 @@
+
+.react-calendar {
+  width: 100%;
+  border: 2px solid gainsboro;
+  box-sizing: border-box;
+}
+
+.react-calendar abbr {
+  text-decoration: none;
+}
+
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 8px;
+}
+
+.react-calendar__navigation button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.react-calendar__month-view__days__day {
+  border: 1px solid #ddd;
+  height: 60px;
+  padding: 4px;
+  background-color: white;
+  font-size: 1rem;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.react-calendar__month-view__days__day:hover {
+  background-color: gainsboro;
+}
+
+.react-calendar__tile--active {
+  background-color: transparent !important;
+  border: 2px solid gray !important;
+  font-weight: bold;
+}
+
+.react-calendar__tile--now {
+  background-color: #B0E0E6 !important;
+}
+
+.highlight-day {
+  background-color: #EEE8AA !important;
+  color: black !important;
+  font-weight: bold;
+}

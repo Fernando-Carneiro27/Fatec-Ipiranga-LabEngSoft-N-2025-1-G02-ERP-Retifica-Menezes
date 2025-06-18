@@ -114,8 +114,6 @@ const ListarVendas = () => {
           getVendasServico(),
           getVendasProduto()
         ]);
-        console.log('Serviços:', resServicos);
-        console.log('Produtos:', resProdutos);
         const vendasServicos: VendaLista[] = (
           resServicos.data?.vendas_servico || []
         ).map((v: VendaServico) => ({

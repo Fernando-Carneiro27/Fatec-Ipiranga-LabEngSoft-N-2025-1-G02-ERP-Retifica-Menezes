@@ -16,8 +16,8 @@ services:
       - rede_docker
 
   backend:
-    build: ./Sprint-4/backend
-    container_name: sprint4-backend
+    build: ./MVP/backend
+    container_name: MVP-backend
     ports:
       - "8000:8000"
     depends_on:
@@ -32,8 +32,8 @@ services:
       - rede_docker
 
   frontend:
-    build: ./Sprint-4/frontend
-    container_name: sprint4-frontend
+    build: ./MVP/frontend
+    container_name: MVP-frontend
     ports:
       - "3000:3000"
     depends_on:
