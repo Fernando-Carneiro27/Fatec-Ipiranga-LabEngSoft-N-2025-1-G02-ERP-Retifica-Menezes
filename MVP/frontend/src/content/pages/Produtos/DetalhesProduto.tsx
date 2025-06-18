@@ -59,13 +59,17 @@ const DetalhesProduto = () => {
   }, [id]);
   useEffect(() => {
     if (produtoData && estoqueData) {
-      const valorCompra = produtoData.valor_compra;
-      const valorVenda = estoqueData.valor_produto_venda;
-
-      if (valorCompra && valorVenda && valorCompra > 0) {
-        const lucro = ((valorVenda - valorCompra) / valorCompra) * 100;
-        setLucroDesejado(Number(lucro.toFixed(2)));
-    }
+      const lucroSalvo = localStorage.getItem(`lucro_produto_${produtoId}`);
+      if (lucroSalvo) {
+        setLucroDesejado(parseFloat(lucroSalvo));
+      } else {
+        const valorCompra = produtoData.valor_compra;
+        const valorVenda = estoqueData.valor_produto_venda;
+        if (valorCompra && valorVenda && valorCompra > 0) {
+          const lucro = ((valorVenda - valorCompra) / valorCompra) * 100;
+          setLucroDesejado(Number(lucro.toFixed(2)));
+        }
+      }
     }
   }, [produtoData, estoqueData]);
 

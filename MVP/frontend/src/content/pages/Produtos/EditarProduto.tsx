@@ -109,16 +109,22 @@ const EditarProduto = () => {
       const valorCompra = produtoData.valor_compra;
       const valorVenda = estoqueData.valor_produto_venda;
 
-      if (valorCompra && valorVenda && valorCompra > 0) {
-        const lucro = ((valorVenda - valorCompra) / valorCompra) * 100;
-        setDadosCalculados((prev) => ({
-          ...prev,
-          lucro_desejado: prev.lucro_desejado || lucro.toFixed(2)
-        }));
-        setLucroDesejadoInicial(lucro.toFixed(2));
-      }
+      const lucroSalvo = localStorage.getItem(`lucro_produto_${produtoId}`);
+      const lucroCalculado =
+        valorCompra && valorVenda && valorCompra > 0
+          ? ((valorVenda - valorCompra) / valorCompra).toFixed(2)
+          : '0';
+
+      const lucroFinal = lucroSalvo ?? lucroCalculado;
+
+      setDadosCalculados((prev) => ({
+        ...prev,
+        lucro_desejado: lucroFinal
+      }));
+      setLucroDesejadoInicial(lucroFinal);
     }
   }, [produtoData, estoqueData]);
+
   useEffect(() => {
     const valorStr = valorCompra.trim();
     const lucroStr = dadosCalculados.lucro_desejado.trim();
@@ -146,7 +152,10 @@ const EditarProduto = () => {
   }, [valorCompra, dadosCalculados.lucro_desejado]);
   useEffect(() => {
     if (produtoData?.valor_compra !== undefined) {
-      setValorCompra(produtoData.valor_compra.toString().replace('.', ','));
+      const valorFormatado = produtoData.valor_compra
+        .toFixed(2)
+        .replace('.', ',');
+      setValorCompra(valorFormatado);
     }
   }, [produtoData]);
 
@@ -215,7 +224,6 @@ const EditarProduto = () => {
     const camposObrigatorios: (keyof EstoqueUpdate)[] = [
       'quantidade_min',
       'quantidade_max',
-      'quantidade_atual',
       'valor_produto_venda'
     ];
     camposObrigatorios.forEach((campo) => {
@@ -395,16 +403,25 @@ const EditarProduto = () => {
                   variant="outlined"
                   fullWidth
                   name="valor"
-                  value={formatarValor(isNaN(parseFloat(valorCompra)) ? 0 : parseFloat(valorCompra))}
-                  onChange={(e) => setValorCompra(e.target.value)}
+                  value={valorCompra}
+                  onChange={(e) => {
+                    const somenteNumerosEVirgula = e.target.value.replace(
+                      /[^\d,]/g,
+                      ''
+                    );
+                    setValorCompra(somenteNumerosEVirgula);
+                  }}
                   onBlur={(e) => {
-                    const valorStr = e.target.value.replace(/,/g, '.');
+                    const valorStr = e.target.value.replace(',', '.');
                     const valorNum = parseFloat(valorStr);
                     setProdutoData((prev) => ({
                       ...prev!,
-                      valor: !isNaN(valorNum) ? valorNum : 0
+                      valor_compra: !isNaN(valorNum) ? valorNum : 0
                     }));
-                    setValorCompra(valorStr);
+                  }}
+                  inputProps={{
+                    inputMode: 'decimal',
+                    pattern: '[0-9]*'
                   }}
                   sx={stylesEditar.formGroup}
                 />
@@ -420,6 +437,14 @@ const EditarProduto = () => {
                       ...prev,
                       lucro_desejado: lucroDesejado
                     }));
+
+                    if (produtoId) {
+                      localStorage.setItem(
+                        `lucro_produto_${produtoId}`,
+                        lucroDesejado
+                      );
+                    }
+
                     const lucroDesejadoNumber = parseFloat(
                       lucroDesejado.replace(',', '.')
                     );
@@ -427,10 +452,13 @@ const EditarProduto = () => {
                       const valorCompra = produtoData.valor_compra || 0;
                       const novoValorVenda =
                         valorCompra * (1 + lucroDesejadoNumber / 100);
-
                       setDadosCalculados((prev) => ({
                         ...prev,
                         valor_venda: novoValorVenda
+                      }));
+                      setEstoqueData((prevState) => ({
+                        ...prevState,
+                        valor_produto_venda: novoValorVenda
                       }));
                     }
                   }}
@@ -486,14 +514,9 @@ const EditarProduto = () => {
                   label="Quantidade atual"
                   variant="outlined"
                   fullWidth
+                  inputProps={{ readOnly: true }}
                   name="quantidade_atual"
                   value={estoqueData.quantidade_atual}
-                  onChange={(e) =>
-                    setEstoqueData({
-                      ...estoqueData,
-                      quantidade_atual: parseFloat(e.target.value) || 0
-                    })
-                  }
                   sx={stylesEditar.formEstoque}
                 />
               </Box>

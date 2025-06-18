@@ -9,5 +9,8 @@ echo "MariaDB iniciado. Rodando migrações..."
 python manage.py makemigrations
 python manage.py migrate
 
+echo "Populando dados de exemplo..."
+python manage.py shell < popular_dados.py
+
 echo "Iniciando servidor Django..."
 exec "$@"

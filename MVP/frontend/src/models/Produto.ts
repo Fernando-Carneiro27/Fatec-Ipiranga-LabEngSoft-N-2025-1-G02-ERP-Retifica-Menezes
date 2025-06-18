@@ -55,6 +55,7 @@ export interface EstoqueUpdate {
     quantidade_min?: number;
     quantidade_max?: number;
     quantidade_atual?: number;
+    quantidade_entrada?: number;
     valor_produto_venda?: number;
     data_modificacao_produto?: string;
 };

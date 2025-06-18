@@ -39,7 +39,7 @@ class EstoqueSerializer(serializers.ModelSerializer):
         write_only=True
     )
     produto = ProdutoSerializer(read_only=True) 
-
+    quantidade_entrada = serializers.IntegerField(write_only=True, required=False) 
     historico_data_modificacao = serializers.ListField(
         child=serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S"),
         required=False
@@ -59,6 +59,7 @@ class EstoqueSerializer(serializers.ModelSerializer):
             'data_modificacao_produto',
             'historico_valor_venda',
             'historico_data_modificacao',
+            'quantidade_entrada'
         ]
 
     def create(self, validated_data):
@@ -82,13 +83,15 @@ class EstoqueSerializer(serializers.ModelSerializer):
         return estoque
     
     def update(self, instance, validated_data):
+        print('validated_data recebido:', validated_data)
         produto = validated_data.pop('produto_id', None)
         if produto:
             instance.produto = produto
 
-        nova_qtd = validated_data.pop("quantidade_atual", None)
-        if nova_qtd is not None:
-            instance.quantidade_atual += nova_qtd
+        quantidade_entrada = validated_data.pop('quantidade_entrada', None)
+        print('quantidade_entrada:', quantidade_entrada)
+        if quantidade_entrada is not None:
+            instance.quantidade_atual += quantidade_entrada
 
             data_atualizacao = datetime.now()
 
@@ -99,10 +102,14 @@ class EstoqueSerializer(serializers.ModelSerializer):
             MovimentacaoEstoque.objects.create(
                 produto=instance.produto,
                 tipo='compra',
-                quantidade=nova_qtd,
+                quantidade=instance.quantidade_atual,  
                 valor_unitario=produto.valor_compra,
                 data=data_atualizacao
             )
+
+        nova_qtd = validated_data.pop('quantidade_atual', None)
+        if nova_qtd is not None:
+            instance.quantidade_atual = nova_qtd
 
         novo_valor_venda = validated_data.pop('valor_produto_venda', None)
         if novo_valor_venda is not None and novo_valor_venda > 0:
@@ -136,7 +143,7 @@ class EstoqueSerializer(serializers.ModelSerializer):
         if value < 0:
             raise serializers.ValidationError("O estoque tem que ser maior que zero.")
         return value
-        
+            
 # MovimentacaoEstoque
 class MovimentacaoEstoqueSerializer(serializers.ModelSerializer):
     produto = serializers.StringRelatedField()

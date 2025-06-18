@@ -55,18 +55,20 @@ const AdicionarProduto = () => {
       }));
       return;
     }
-    const calculado = valor / (1 - lucro / 100);
+
+    const calculado = valor * (1 + lucro / 100);
     const valorVendaCalculado = parseFloat(calculado.toFixed(2));
+
     setDadosCalculados((prev) => ({
       ...prev,
       valor_venda: valorVendaCalculado
     }));
+
     setEstoqueData((prevState) => ({
       ...prevState,
       valor_produto_venda: valorVendaCalculado
     }));
   }, [valorCompra, dadosCalculados.lucro_desejado]);
-
   const handleMudanca = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -81,7 +83,6 @@ const AdicionarProduto = () => {
       data_modificacao_compra:
         dataHoje || new Date().toISOString().split('T')[0]
     };
-    console.log(produtoComData);
     const camposObrigatorios = [
       'nome',
       'valor_compra',
@@ -116,9 +117,12 @@ const AdicionarProduto = () => {
         setAbrirAviso(true);
         return;
       }
-      console.log(produtoResponse);
       const produtoId = (produtoResponse.data as any)?.id;
       if (produtoId) {
+        localStorage.setItem(
+          `lucro_produto_${produtoId}`,
+          dadosCalculados.lucro_desejado
+        );
         if (
           !estoqueData.quantidade_min ||
           !estoqueData.quantidade_max ||
@@ -149,9 +153,6 @@ const AdicionarProduto = () => {
 
         setInfoMessage('Produto cadastrado e estoque criado com sucesso!');
         setAbrirAviso(true);
-        setTimeout(() => {
-          navigate('/produtos');
-        }, 2000);
         handleCancelar();
         setErros({});
       } else {
@@ -189,7 +190,7 @@ const AdicionarProduto = () => {
     setDadosCalculados({ lucro_desejado: '', valor_venda: 0 });
     setErros({});
     setTimeout(() => {
-      window.history.back();
+      navigate('/produtos');
     }, 2500);
   };
 

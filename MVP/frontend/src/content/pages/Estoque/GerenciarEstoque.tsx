@@ -36,6 +36,9 @@ const GerenciarEstoque = () => {
   const [valorCompraAlterado, setValorCompraAlterado] = useState<{
     [produtoId: number]: number;
   }>({});
+  const [valorCompraTexto, setValorCompraTexto] = useState<{
+    [produtoId: number]: string;
+  }>({});
   const [listaProdutos, setListaProdutos] = useState<Produto[]>([]);
   const [infoMessage, setInfoMessage] = useState<string>('');
   const [abrirAviso, setAbrirAviso] = useState(false);
@@ -81,17 +84,27 @@ const GerenciarEstoque = () => {
     setEstoqueItens((prev) => prev.filter((_, i) => i !== index));
   };
   const handleValorCompraChange = (produtoId: number, valor: number) => {
-    if (valor > 0) {
-      setValorCompraAlterado((prev) => ({
-        ...prev,
-        [produtoId]: valor
-      }));
-    } else {
-      setValorCompraAlterado((prev) => {
-        const novo = { ...prev };
-        delete novo[produtoId];
-        return novo;
-      });
+    setValorCompraAlterado((prev) => ({
+      ...prev,
+      [produtoId]: valor
+    }));
+
+    const lucroStr = localStorage.getItem(`lucro_produto_${produtoId}`);
+    const lucro = lucroStr ? parseFloat(lucroStr.replace(',', '.')) : 0;
+
+    if (!isNaN(lucro)) {
+      const valorVenda = valor * (1 + lucro / 100);
+
+      setEstoqueItens((prev) =>
+        prev.map((item) =>
+          item.produto_id === produtoId
+            ? {
+                ...item,
+                valor_produto_venda: parseFloat(valorVenda.toFixed(2))
+              }
+            : item
+        )
+      );
     }
   };
   const handleSalvarAlteracoes = async () => {
@@ -102,11 +115,10 @@ const GerenciarEstoque = () => {
         const itemOriginal = estoqueItens.find(
           (item) => item.produto_id === produtoId
         );
-        const quantidadeAtualOriginal = itemOriginal?.quantidade_atual ?? 0;
 
         return {
           produto_id: produtoId,
-          quantidade_atual: quantidadeAtualOriginal + entrada,
+          quantidade_entrada: entrada,
           valor_produto_venda: itemOriginal?.valor_produto_venda || 0
         };
       }
@@ -126,7 +138,7 @@ const GerenciarEstoque = () => {
         const produtoId = atualizacao.produto_id;
 
         await editarEstoque(produtoId, {
-          quantidade_atual: atualizacao.quantidade_atual,
+          quantidade_entrada: atualizacao.quantidade_entrada,
           valor_produto_venda: atualizacao.valor_produto_venda
         });
 
@@ -139,18 +151,14 @@ const GerenciarEstoque = () => {
       }
       setInfoMessage('Estoque atualizado com sucesso!');
       setAbrirAviso(true);
-      setEstoqueAlterado({});
-      setValorCompraAlterado({});
-
-      setTimeout(() => {
-        navigate('/estoque');
-      }, 2000);
+      handleCancelar();
     } catch (error) {
       console.error('Erro ao salvar alterações:', error);
       setInfoMessage('Erro ao atualizar estoque ou produto. Tente novamente.');
       setAbrirAviso(true);
     }
   };
+  
   const totalCompras = useMemo(() => {
     return estoqueItens.reduce((total, item) => {
       const produto = listaProdutos.find((p) => p.id === item.produto_id);
@@ -162,8 +170,12 @@ const GerenciarEstoque = () => {
     }, 0);
   }, [estoqueItens, listaProdutos, valorCompraAlterado]);
   const handleCancelar = () => {
+    setListaProdutos([]);
+    setEstoqueAlterado({});
+    setValorCompraAlterado({});
+    setEstoqueItens([]);
     setTimeout(() => {
-      window.history.back();
+      navigate('/estoque');
     }, 2500);
   };
 
@@ -182,7 +194,7 @@ const GerenciarEstoque = () => {
   return (
     <HelmetProvider>
       <Helmet>
-        <title>Adicionar Venda</title>
+        <title>Gerenciar Estoque</title>
       </Helmet>
       <Box
         sx={{
@@ -299,22 +311,35 @@ const GerenciarEstoque = () => {
                       />
                       <TextField
                         label="Valor unitário"
-                        type="number"
+                        type="text"
                         variant="outlined"
                         fullWidth
                         value={
                           produto
-                            ? valorCompraAlterado[produto.id] ??
-                              produto.valor_compra
+                            ? valorCompraTexto[produto.id] ??
+                              valorCompraAlterado[produto.id]?.toString() ??
+                              produto.valor_compra?.toString() ??
+                              ''
                             : ''
                         }
-                        onChange={(e) =>
-                          produto &&
-                          handleValorCompraChange(
-                            produto.id,
-                            parseFloat(e.target.value) || 0
-                          )
-                        }
+                        onChange={(e) => {
+                          if (produto) {
+                            setValorCompraTexto((prev) => ({
+                              ...prev,
+                              [produto.id]: e.target.value
+                            }));
+                          }
+                        }}
+                        onBlur={(e) => {
+                          if (produto) {
+                            const valorStr = e.target.value.replace(',', '.');
+                            const valorNum = parseFloat(valorStr);
+                            handleValorCompraChange(
+                              produto.id,
+                              isNaN(valorNum) ? 0 : valorNum
+                            );
+                          }
+                        }}
                         sx={{ ...stylesAdd.formGroup, maxWidth: '150px' }}
                       />
                       <TextField
