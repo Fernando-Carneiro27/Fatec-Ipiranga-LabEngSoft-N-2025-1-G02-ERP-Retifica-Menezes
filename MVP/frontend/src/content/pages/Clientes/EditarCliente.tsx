@@ -12,7 +12,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useRequests } from 'src/utils/requests';
 import { ClienteUpdate } from 'src/models/Cliente';
 import { PhotoCamera } from '@mui/icons-material';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate, useParams } from 'react-router';
 import stylesEditar from 'src/content/pages/Clientes/stylesEditarCliente';
 
@@ -177,7 +177,7 @@ const EditarCliente = () => {
           <Box sx={stylesEditar.grayContainer}>
             <Box sx={stylesEditar.formContainer}>
               <TextField
-                label="Nome"
+                label="Nome *"
                 variant="outlined"
                 fullWidth
                 name="nome"
@@ -186,7 +186,7 @@ const EditarCliente = () => {
                 sx={stylesEditar.formGroup}
               />
               <TextField
-                label="CPF / CNPJ"
+                label="CPF / CNPJ *"
                 variant="outlined"
                 fullWidth
                 name="cpf_cnpj"
@@ -197,7 +197,7 @@ const EditarCliente = () => {
                 helperText={errors.cpf_cnpj ? errors.cpf_cnpj[0] : ''}
               />
               <TextField
-                label="Email"
+                label="Email *"
                 variant="outlined"
                 fullWidth
                 name="email"
@@ -211,7 +211,7 @@ const EditarCliente = () => {
 
             <Box sx={stylesEditar.formContainer}>
               <TextField
-                label="Telefone"
+                label="Telefone *"
                 variant="outlined"
                 fullWidth
                 name="telefone"
@@ -222,7 +222,7 @@ const EditarCliente = () => {
                 helperText={errors.telefone ? errors.telefone[0] : ''}
               />
               <TextField
-                label="CEP"
+                label="CEP *"
                 variant="outlined"
                 fullWidth
                 name="cep"
@@ -231,7 +231,7 @@ const EditarCliente = () => {
                 sx={stylesEditar.formGroup}
               />
               <TextField
-                label="Endereço"
+                label="Endereço *"
                 variant="outlined"
                 fullWidth
                 name="endereco"
@@ -243,7 +243,7 @@ const EditarCliente = () => {
 
             <Box sx={stylesEditar.formContainer}>
               <TextField
-                label="Bairro"
+                label="Bairro *"
                 variant="outlined"
                 fullWidth
                 name="bairro"
@@ -252,7 +252,7 @@ const EditarCliente = () => {
                 sx={stylesEditar.formGroup}
               />
               <TextField
-                label="Tipo de Cliente"
+                label="Tipo de Cliente *"
                 variant="outlined"
                 fullWidth
                 name="tipo"
@@ -261,7 +261,7 @@ const EditarCliente = () => {
                 sx={stylesEditar.formGroup}
               />
               <TextField
-                label="Status Cliente"
+                label="Status Cliente *"
                 variant="outlined"
                 fullWidth
                 name="status_cliente"

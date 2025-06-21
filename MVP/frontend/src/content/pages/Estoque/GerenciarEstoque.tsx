@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useRequests } from 'src/utils/requests';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate } from 'react-router';
 import stylesAdd from 'src/content/pages/Estoque/stylesGerenciarEstoque';
 import { EstoqueUpdate, Produto } from 'src/models/Produto';
@@ -158,7 +158,7 @@ const GerenciarEstoque = () => {
       setAbrirAviso(true);
     }
   };
-  
+
   const totalCompras = useMemo(() => {
     return estoqueItens.reduce((total, item) => {
       const produto = listaProdutos.find((p) => p.id === item.produto_id);

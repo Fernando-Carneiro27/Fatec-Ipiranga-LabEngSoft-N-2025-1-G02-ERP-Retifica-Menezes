@@ -8,6 +8,7 @@ export type VendaItem = {
     quantidade: number;
     valor_unitario: number;
     descricao?: string;
+    valor_total_itens?: number;
 };
 export type VendaProduto = {
     id?: number;

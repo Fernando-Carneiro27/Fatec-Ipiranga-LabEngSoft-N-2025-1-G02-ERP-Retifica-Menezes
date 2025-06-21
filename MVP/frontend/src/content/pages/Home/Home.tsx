@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import stylesHome from './stylesHome';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Calendar from 'react-calendar';
@@ -66,7 +66,7 @@ const Home = () => {
                   <CheckCircleIcon sx={{ color: '#4CAF50' }} />
                 </Box>
                 <Typography variant="h6" sx={stylesHome.cardTitulo}>
-                  A receber 
+                  A receber
                 </Typography>
               </Box>
               <Typography variant="h4">R$ 0,00</Typography>

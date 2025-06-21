@@ -14,7 +14,7 @@ import {
   Typography
 } from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useRequests } from 'src/utils/requests';
 import stylesCliente from './stylesDetalhesCliente';
 import { Visibility } from '@mui/icons-material';
@@ -22,7 +22,13 @@ import { Visibility } from '@mui/icons-material';
 const DetalhesCliente = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getUmCliente, getVendasProduto, getVendasServico, getUmaVendaProduto, getUmaVendaServico } = useRequests();
+  const {
+    getUmCliente,
+    getVendasProduto,
+    getVendasServico,
+    getUmaVendaProduto,
+    getUmaVendaServico
+  } = useRequests();
   const [cliente, setCliente] = useState(null);
   const [abaSelecionada, setAbaSelecionada] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -142,7 +148,14 @@ const DetalhesCliente = () => {
 
   if (loading || !cliente)
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -187,39 +200,69 @@ const DetalhesCliente = () => {
                 <TableBody>
                   <TableRow>
                     <TableCell sx={stylesCliente.campoCliente}>Nome</TableCell>
-                    <TableCell sx={stylesCliente.campoValor}>{cliente.nome}</TableCell>
+                    <TableCell sx={stylesCliente.campoValor}>
+                      {cliente.nome}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={stylesCliente.campoCliente}>CPF / CNPJ</TableCell>
-                    <TableCell sx={stylesCliente.campoValor}>{cliente.cpf_cnpj}</TableCell>
+                    <TableCell sx={stylesCliente.campoCliente}>
+                      CPF / CNPJ
+                    </TableCell>
+                    <TableCell sx={stylesCliente.campoValor}>
+                      {cliente.cpf_cnpj}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell sx={stylesCliente.campoCliente}>Email</TableCell>
-                    <TableCell sx={stylesCliente.campoValor}>{cliente.email}</TableCell>
+                    <TableCell sx={stylesCliente.campoValor}>
+                      {cliente.email}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={stylesCliente.campoCliente}>Celular</TableCell>
-                    <TableCell sx={stylesCliente.campoValor}>{cliente.telefone}</TableCell>
+                    <TableCell sx={stylesCliente.campoCliente}>
+                      Celular
+                    </TableCell>
+                    <TableCell sx={stylesCliente.campoValor}>
+                      {cliente.telefone}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell sx={stylesCliente.campoCliente}>CEP</TableCell>
-                    <TableCell sx={stylesCliente.campoValor}>{cliente.cep}</TableCell>
+                    <TableCell sx={stylesCliente.campoValor}>
+                      {cliente.cep}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={stylesCliente.campoCliente}>Endereço</TableCell>
-                    <TableCell sx={stylesCliente.campoValor}>{cliente.endereco}</TableCell>
+                    <TableCell sx={stylesCliente.campoCliente}>
+                      Endereço
+                    </TableCell>
+                    <TableCell sx={stylesCliente.campoValor}>
+                      {cliente.endereco}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={stylesCliente.campoCliente}>Bairro</TableCell>
-                    <TableCell sx={stylesCliente.campoValor}>{cliente.bairro}</TableCell>
+                    <TableCell sx={stylesCliente.campoCliente}>
+                      Bairro
+                    </TableCell>
+                    <TableCell sx={stylesCliente.campoValor}>
+                      {cliente.bairro}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={stylesCliente.campoCliente}>Tipo de Cliente</TableCell>
-                    <TableCell sx={stylesCliente.campoValor}>{cliente.tipo}</TableCell>
+                    <TableCell sx={stylesCliente.campoCliente}>
+                      Tipo de Cliente
+                    </TableCell>
+                    <TableCell sx={stylesCliente.campoValor}>
+                      {cliente.tipo}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={stylesCliente.campoCliente}>Status Cliente</TableCell>
-                    <TableCell sx={stylesCliente.campoValor}>{cliente.status_cliente}</TableCell>
+                    <TableCell sx={stylesCliente.campoCliente}>
+                      Status Cliente
+                    </TableCell>
+                    <TableCell sx={stylesCliente.campoValor}>
+                      {cliente.status_cliente}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -243,23 +286,60 @@ const DetalhesCliente = () => {
                 <Table size="small">
                   <TableBody>
                     <TableRow>
-                      <TableCell sx={stylesCliente.campoCliente}>Tipo de Venda</TableCell>
-                      <TableCell sx={stylesCliente.campoCliente}>Data de Início</TableCell>
-                      <TableCell sx={stylesCliente.campoCliente}>Data de Entrega</TableCell>
-                      <TableCell sx={stylesCliente.campoCliente}>Status</TableCell>
-                      <TableCell sx={stylesCliente.campoCliente}>Valor Total</TableCell>
-                      <TableCell sx={stylesCliente.campoCliente}>Ação</TableCell>
+                      <TableCell sx={stylesCliente.campoCliente}>
+                        Tipo de Venda
+                      </TableCell>
+                      <TableCell sx={stylesCliente.campoCliente}>
+                        Data de Início
+                      </TableCell>
+                      <TableCell sx={stylesCliente.campoCliente}>
+                        Data de Entrega
+                      </TableCell>
+                      <TableCell sx={stylesCliente.campoCliente}>
+                        Status
+                      </TableCell>
+                      <TableCell sx={stylesCliente.campoCliente}>
+                        Valor Total
+                      </TableCell>
+                      <TableCell sx={stylesCliente.campoCliente}>
+                        Ação
+                      </TableCell>
                     </TableRow>
                     {vendas.map((venda, index) => (
                       <TableRow key={index}>
-                        <TableCell sx={{ ...stylesCliente.campoValor, width: '150px' }}>{venda.tipoDisplay}</TableCell>
-                        <TableCell sx={{ ...stylesCliente.campoValor, width: '130px' }}>{formatarData(venda.data_inicio)}</TableCell>
-                        <TableCell sx={{ ...stylesCliente.campoValor, width: '140px' }}>{formatarData(venda.data_entrega)}</TableCell>
-                        <TableCell sx={{ ...stylesCliente.campoValor, width: '100px' }}>{venda.status_pagamento}</TableCell>
-                        <TableCell sx={{ ...stylesCliente.campoValor, width: '120px' }}>{formatarValor(venda.valor_total)}</TableCell>
-                        <TableCell sx={{ ...stylesCliente.campoValor, width: '120px' }}>
-                          <Button sx={stylesCliente.buttonVisualizar}
-                            onClick={() => handleVisualizar(venda.id, venda.tipo) }
+                        <TableCell
+                          sx={{ ...stylesCliente.campoValor, width: '150px' }}
+                        >
+                          {venda.tipoDisplay}
+                        </TableCell>
+                        <TableCell
+                          sx={{ ...stylesCliente.campoValor, width: '130px' }}
+                        >
+                          {formatarData(venda.data_inicio)}
+                        </TableCell>
+                        <TableCell
+                          sx={{ ...stylesCliente.campoValor, width: '140px' }}
+                        >
+                          {formatarData(venda.data_entrega)}
+                        </TableCell>
+                        <TableCell
+                          sx={{ ...stylesCliente.campoValor, width: '100px' }}
+                        >
+                          {venda.status_pagamento}
+                        </TableCell>
+                        <TableCell
+                          sx={{ ...stylesCliente.campoValor, width: '120px' }}
+                        >
+                          {formatarValor(venda.valor_total)}
+                        </TableCell>
+                        <TableCell
+                          sx={{ ...stylesCliente.campoValor, width: '120px' }}
+                        >
+                          <Button
+                            sx={stylesCliente.buttonVisualizar}
+                            onClick={() =>
+                              handleVisualizar(venda.id, venda.tipo)
+                            }
                             endIcon={<Visibility />}
                           >
                             Visualizar
@@ -273,9 +353,15 @@ const DetalhesCliente = () => {
             </TableContainer>
           )}
           <Box sx={stylesCliente.botaoVoltar}>
-            <Button onClick={() => setTimeout(() => {
-                    window.history.back();
-                    }, 2500)}>Voltar</Button>
+            <Button
+              onClick={() =>
+                setTimeout(() => {
+                  window.history.back();
+                }, 2500)
+              }
+            >
+              Voltar
+            </Button>
           </Box>
         </Box>
       </Box>

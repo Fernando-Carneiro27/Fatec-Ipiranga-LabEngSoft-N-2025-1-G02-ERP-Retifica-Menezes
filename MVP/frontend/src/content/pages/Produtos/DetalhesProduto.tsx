@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Button, CircularProgress, Typography } from '@mui/material';
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Button,
+  CircularProgress,
+  Typography
+} from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useRequests } from 'src/utils/requests';
 import stylesProduto from 'src/content/pages/Produtos/stylesDetalhesProduto';
 import { Estoque } from 'src/models/Produto';
@@ -14,8 +24,16 @@ const DetalhesProduto = () => {
   const { getEstoque, getUmProduto } = useRequests();
   const [lucroDesejado, setLucroDesejado] = useState<number>(0);
   const [produtoId, setProdutoId] = useState<number | null>(null);
-  const [produtoData, setProdutoData] = useState<{ id: Number; nome: string; descricao: string; valor_compra: number; }>({
-    id: 0, nome: '', descricao: '', valor_compra: 0
+  const [produtoData, setProdutoData] = useState<{
+    id: Number;
+    nome: string;
+    descricao: string;
+    valor_compra: number;
+  }>({
+    id: 0,
+    nome: '',
+    descricao: '',
+    valor_compra: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -27,7 +45,11 @@ const DetalhesProduto = () => {
           const estoqueResponse = await getEstoque(+id);
           console.log('Resposta da API (getEstoque):', estoqueResponse);
 
-          if ( !estoqueResponse || estoqueResponse.errors || !estoqueResponse.data?.estoque ) {
+          if (
+            !estoqueResponse ||
+            estoqueResponse.errors ||
+            !estoqueResponse.data?.estoque
+          ) {
             throw new Error(
               'Erro ao carregar estoque: ' + estoqueResponse.detail ||
                 'Resposta inválida'
@@ -44,7 +66,10 @@ const DetalhesProduto = () => {
             const produto = produtoResponse.data.produto;
 
             setProdutoData({
-              id: produto.id, nome: produto.nome, descricao: produto.descricao, valor_compra: produto.valor_compra
+              id: produto.id,
+              nome: produto.nome,
+              descricao: produto.descricao,
+              valor_compra: produto.valor_compra
             });
           }
         } catch (error) {
@@ -75,11 +100,18 @@ const DetalhesProduto = () => {
 
   if (loading || !produtoData)
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
+      >
         <CircularProgress />
       </Box>
     );
-    
+
   return (
     <HelmetProvider>
       <Helmet>
@@ -101,47 +133,80 @@ const DetalhesProduto = () => {
 
       <Box sx={stylesProduto.produtosDetalhes}>
         <Box sx={stylesProduto.abas}>
-            <Typography variant="h6" sx={stylesProduto.aba}> DADOS </Typography>
+          <Typography variant="h6" sx={stylesProduto.aba}>
+            {' '}
+            DADOS{' '}
+          </Typography>
         </Box>
 
         <TableContainer>
-        <Table size="small" aria-label="detalhes do produto">
+          <Table size="small" aria-label="detalhes do produto">
             <TableBody>
-            <TableRow>
+              <TableRow>
                 <TableCell sx={stylesProduto.campoTitulo}>Nome</TableCell>
-                <TableCell sx={stylesProduto.campoValor}> {produtoData.nome} </TableCell>
-            </TableRow>
-            <TableRow>
+                <TableCell sx={stylesProduto.campoValor}>
+                  {' '}
+                  {produtoData.nome}{' '}
+                </TableCell>
+              </TableRow>
+              <TableRow>
                 <TableCell sx={stylesProduto.campoTitulo}>Código</TableCell>
-                <TableCell sx={stylesProduto.campoValor}> {produtoData.id} </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell sx={stylesProduto.campoTitulo}>Valor de Compra (R$)</TableCell>
-                <TableCell sx={stylesProduto.campoValor}> {produtoData.valor_compra} </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell sx={stylesProduto.campoTitulo}>Lucro Desejado (%)</TableCell>
-                <TableCell sx={stylesProduto.campoValor}> {lucroDesejado}% </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell sx={stylesProduto.campoTitulo}>Valor de Venda (R$)</TableCell>
-                <TableCell sx={stylesProduto.campoValor}> {estoqueData.valor_produto_venda} </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell sx={stylesProduto.campoTitulo}> Observações </TableCell>
-                <TableCell sx={stylesProduto.campoValor}> {produtoData.descricao} </TableCell>
-            </TableRow>
+                <TableCell sx={stylesProduto.campoValor}>
+                  {' '}
+                  {produtoData.id}{' '}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell sx={stylesProduto.campoTitulo}>
+                  Valor de Compra (R$)
+                </TableCell>
+                <TableCell sx={stylesProduto.campoValor}>
+                  {' '}
+                  {produtoData.valor_compra}{' '}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell sx={stylesProduto.campoTitulo}>
+                  Lucro Desejado (%)
+                </TableCell>
+                <TableCell sx={stylesProduto.campoValor}>
+                  {' '}
+                  {lucroDesejado}%{' '}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell sx={stylesProduto.campoTitulo}>
+                  Valor de Venda (R$)
+                </TableCell>
+                <TableCell sx={stylesProduto.campoValor}>
+                  {' '}
+                  {estoqueData.valor_produto_venda}{' '}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell sx={stylesProduto.campoTitulo}>
+                  {' '}
+                  Observações{' '}
+                </TableCell>
+                <TableCell sx={stylesProduto.campoValor}>
+                  {' '}
+                  {produtoData.descricao}{' '}
+                </TableCell>
+              </TableRow>
             </TableBody>
-        </Table>
+          </Table>
         </TableContainer>
-        
+
         <Box sx={stylesProduto.botaoVoltar}>
-            <Button onClick={() => {
-                    setTimeout(() => {
-                    window.history.back();
-                    }, 2500);
-                }}
-            >Voltar</Button>
+          <Button
+            onClick={() => {
+              setTimeout(() => {
+                window.history.back();
+              }, 2500);
+            }}
+          >
+            Voltar
+          </Button>
         </Box>
       </Box>
     </HelmetProvider>

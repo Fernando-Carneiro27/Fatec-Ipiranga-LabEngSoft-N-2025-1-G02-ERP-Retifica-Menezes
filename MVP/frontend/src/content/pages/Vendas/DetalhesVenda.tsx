@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Table,
@@ -15,7 +15,7 @@ import {
   TableHead
 } from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useRequests } from 'src/utils/requests';
 import stylesVenda from './stylesDetalhesVenda';
 import { VendaProduto, VendaProdutoDetail } from 'src/models/VendaProduto';
@@ -25,6 +25,7 @@ const DetalhesVenda = () => {
   type LocationState = {
     tipo: 'produto' | 'servico';
   };
+  const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
   const tipoVenda = location.state as LocationState;
@@ -40,24 +41,24 @@ const DetalhesVenda = () => {
           throw new Error('ID ou tipo da venda não fornecido.');
         }
 
-        const dados =
-          tipoVenda.tipo === 'produto'
-            ? await getUmaVendaProduto(+id)
-            : await getUmaVendaServico(+id);
+        let dados;
 
-        if (!dados || !dados.data) {
-          throw new Error(dados?.detail || 'Venda não encontrada.');
-        }
-
-        if (tipoVenda.tipo === 'produto' && 'venda_produto' in dados.data) {
-          setVenda(dados.data.venda_produto);
-        } else if (
-          tipoVenda.tipo === 'servico' &&
-          'venda_servico' in dados.data
-        ) {
-          setVenda(dados.data.venda_servico);
+        if (tipoVenda.tipo === 'produto') {
+          dados = await getUmaVendaProduto(+id);
+          if (dados?.data?.venda_produto) {
+            setVenda(dados.data.venda_produto);
+          } else {
+            throw new Error('Dados da venda de produto inválidos.');
+          }
+        } else if (tipoVenda.tipo === 'servico') {
+          dados = await getUmaVendaServico(+id);
+          if (dados?.data?.venda_servico) {
+            setVenda(dados.data.venda_servico); 
+          } else {
+            throw new Error('Dados da venda de serviço inválidos.');
+          }
         } else {
-          throw new Error('Dados de venda inválidos');
+          throw new Error('Tipo de venda desconhecido.');
         }
       } catch (error) {
         console.error('Erro ao buscar venda:', error);
@@ -70,22 +71,9 @@ const DetalhesVenda = () => {
     buscarVenda();
   }, [id, tipoVenda]);
 
-  const formatarData = (dataString: string | null | undefined) => {
+  const formatarData = (dataString: string) => {
     if (!dataString) return '';
-    const data = new Date(dataString);
-    return data.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
-  const formatarValor = (valor: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(valor);
+    return dataString.split('T')[0].split('-').reverse().join('/');
   };
 
   const handleAbas = (event: React.SyntheticEvent, newValue: number) => {
@@ -194,7 +182,9 @@ const DetalhesVenda = () => {
                         item.servico?.nome ??
                         item.produto?.nome ??
                         '-';
+
                       const quantidade = item.quantidade ?? 1;
+
                       const valorUnitario = parseFloat(
                         String(
                           item.valor_unitario ??
@@ -203,19 +193,18 @@ const DetalhesVenda = () => {
                             '0'
                         )
                       );
+
                       const valorFinal = parseFloat(
-                        String(
-                          item.valor_total ??
-                            item.valor_servico ??
-                            valorUnitario * quantidade
-                        )
+                        String(item.valor_total_itens ?? 0)
                       );
+
                       const totalBruto = valorUnitario * quantidade;
                       const desconto = totalBruto - valorFinal;
                       const descontoPorcentagem =
                         totalBruto > 0
                           ? ((desconto / totalBruto) * 100).toFixed(2)
                           : '0.00';
+
                       const observacao = item.observacao ?? '-';
 
                       return (
@@ -249,7 +238,7 @@ const DetalhesVenda = () => {
                               Valor Unitário
                             </TableCell>
                             <TableCell sx={stylesVenda.campoValor}>
-                              {formatarValor(valorUnitario)}
+                              R$ {valorUnitario.toFixed(2)}
                             </TableCell>
                           </TableRow>
                           <TableRow>
@@ -265,7 +254,7 @@ const DetalhesVenda = () => {
                               Valor Total
                             </TableCell>
                             <TableCell sx={stylesVenda.campoValor}>
-                              {formatarValor(valorFinal)}
+                              R$ {valorFinal.toFixed(2)}
                             </TableCell>
                           </TableRow>
                         </React.Fragment>
@@ -275,6 +264,7 @@ const DetalhesVenda = () => {
                 </Table>
               </TableContainer>
             )}
+
           {abaSelecionada === 2 &&
             Array.isArray(venda?.itens) &&
             venda.itens.length > 0 && (
@@ -320,18 +310,10 @@ const DetalhesVenda = () => {
                         : [];
 
                       let valorBruto = 0;
-
                       itens.forEach((item) => {
-                        const valorUnitario = parseFloat(
-                          String(
-                            item.valor_unitario ??
-                              item.servico?.valor_servico ??
-                              item.produto?.preco_venda ??
-                              '0'
-                          )
+                        valorBruto += parseFloat(
+                          String(item.valor_total_itens ?? 0)
                         );
-                        const quantidade = item.quantidade ?? 1;
-                        valorBruto += valorUnitario * quantidade;
                       });
 
                       const valorTotal = parseFloat(
@@ -358,7 +340,7 @@ const DetalhesVenda = () => {
                               Total
                             </TableCell>
                             <TableCell sx={stylesVenda.campoValor}>
-                              {formatarValor(valorTotal)}
+                              R$ {valorTotal.toFixed(2)}
                             </TableCell>
                           </TableRow>
                         </>
@@ -372,7 +354,7 @@ const DetalhesVenda = () => {
             <Button
               onClick={() =>
                 setTimeout(() => {
-                  window.history.back();
+                  navigate('/vendas');
                 }, 2500)
               }
             >

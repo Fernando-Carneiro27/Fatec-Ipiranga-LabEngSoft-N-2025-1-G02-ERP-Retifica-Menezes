@@ -32,7 +32,7 @@ import {
   HistoryTwoTone
 } from '@mui/icons-material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate } from 'react-router';
 import {
   getUmaVendaProduto,
@@ -44,16 +44,16 @@ import { Servico } from 'src/models/Servico';
 import { VendaServico, VendaServicoItem } from 'src/models/VendaServico';
 import { VendaItem, VendaProduto } from 'src/models/VendaProduto';
 
+type VendaLista = {
+  id: number;
+  cliente: string;
+  data: string;
+  situacao: string;
+  status: string;
+  valor_total: number;
+  tipo: 'servico' | 'produto';
+};
 const ListarVendas = () => {
-  type VendaLista = {
-    id: number;
-    cliente: string;
-    data: string;
-    situacao: string;
-    status: string;
-    valor_total: number;
-    tipo: 'servico' | 'produto';
-  };
   const opcoesMeses = [
     'Todos',
     'Janeiro',
@@ -69,7 +69,7 @@ const ListarVendas = () => {
     'Novembro',
     'Dezembro'
   ];
-  const [mesSelecionado, setMesSelecionado] = useState<string | null>(null);
+  const [mesSelecionado, setMesSelecionado] = useState<string | null>('Todos');
   const [abrirCaixa, setAbrirCaixa] = useState(false);
   const [vendas, setVendas] = useState<VendaLista[]>([]);
   const [colunasVisiveis, setColunasVisiveis] = useState({
@@ -90,22 +90,12 @@ const ListarVendas = () => {
     getVendasServico,
     getVendasProduto,
     deleteVendaServico,
-    deleteVendaProduto
+    deleteVendaProduto,
+    getUmaVendaProduto,
+    getUmaVendaServico
   } = useRequests();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (mesSelecionado === 'Todos') {
-      setVendasFiltradas(vendas);
-      return;
-    }
-    const mesIndex = opcoesMeses.indexOf(mesSelecionado) - 1;
-    const vendasDoMes = vendas.filter((venda) => {
-      const dataVenda = new Date(venda.data);
-      return dataVenda.getMonth() === mesIndex;
-    });
-    setVendasFiltradas(vendasDoMes);
-  }, [mesSelecionado, vendas]);
   useEffect(() => {
     const carregarVendas = async () => {
       setLoading(true);
@@ -114,6 +104,7 @@ const ListarVendas = () => {
           getVendasServico(),
           getVendasProduto()
         ]);
+
         const vendasServicos: VendaLista[] = (
           resServicos.data?.vendas_servico || []
         ).map((v: VendaServico) => ({
@@ -138,7 +129,10 @@ const ListarVendas = () => {
           tipo: 'produto'
         }));
 
-        setVendas([...vendasServicos, ...vendasProdutos]);
+        const datasOrganizadas = [...vendasServicos, ...vendasProdutos].sort(
+          (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
+        );
+        setVendas(datasOrganizadas);
       } catch (error) {
         console.error('Erro ao buscar vendas:', error);
         setVendas([]);
@@ -149,6 +143,17 @@ const ListarVendas = () => {
 
     carregarVendas();
   }, [getVendasServico, getVendasProduto]);
+  useEffect(() => {
+    if (mesSelecionado === 'Todos') {
+      setVendasFiltradas(vendas);
+      return;
+    }
+    const mesIndex = opcoesMeses.indexOf(mesSelecionado!) - 1;
+    const filtradas = vendas.filter(
+      (v) => new Date(v.data).getMonth() === mesIndex
+    );
+    setVendasFiltradas(filtradas);
+  }, [mesSelecionado, vendas]);
 
   const handleVisualizar = async (id: number, tipo: 'produto' | 'servico') => {
     try {
@@ -234,11 +239,11 @@ const ListarVendas = () => {
   const handleAddVenda = () => {
     setTimeout(() => {
       navigate('/venda-add');
-    }, 1500);
+    }, 2500);
   };
-  const formatarData = (data: string | Date) => {
-    const dateObj = new Date(data);
-    return dateObj.toLocaleDateString('pt-BR');
+  const formatarData = (dataString: string) => {
+    if (!dataString) return '';
+    return dataString.split('T')[0].split('-').reverse().join('/');
   };
 
   return (
@@ -255,7 +260,7 @@ const ListarVendas = () => {
             alt="Ícone Venda"
             sx={stylesLista.headerVendaImg}
           />
-          <Box sx={stylesLista.headerVendaSpan}>Vendas - Gerais</Box>
+          <Box sx={stylesLista.headerVendaSpan}>Vendas</Box>
         </Box>
 
         <Box sx={stylesLista.buttons}>
@@ -542,7 +547,7 @@ const ListarVendas = () => {
           sx: {
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: '80px',
+            margin: '50px 30px 0 0 ',
             bgcolor:
               infoMessage === 'Venda excluída com sucesso!' ? 'green' : 'red',
             color: 'white',

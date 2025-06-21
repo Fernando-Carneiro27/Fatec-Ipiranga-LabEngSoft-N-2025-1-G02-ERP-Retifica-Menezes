@@ -30,7 +30,7 @@ import {
   CompareArrowsTwoTone
 } from '@mui/icons-material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate } from 'react-router';
 import { useRequests } from 'src/utils/requests';
 import stylesLista from 'src/content/pages/Estoque/stylesListarEstoque';

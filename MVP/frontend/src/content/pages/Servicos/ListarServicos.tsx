@@ -1,8 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Box, Typography, Card,
-  TableContainer, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Tooltip, Button,
-  Dialog, DialogTitle, DialogContent, FormControlLabel, Checkbox, DialogActions, TextField, Snackbar
+  Box,
+  Typography,
+  Card,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  IconButton,
+  Tooltip,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  FormControlLabel,
+  Checkbox,
+  DialogActions,
+  TextField,
+  Snackbar
 } from '@mui/material';
 import {
   AddCircleOutlineTwoTone,
@@ -14,7 +31,7 @@ import {
   HistoryTwoTone
 } from '@mui/icons-material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate } from 'react-router';
 import { useRequests } from 'src/utils/requests';
 import stylesLista from 'src/content/pages/Servicos/stylesListarServicos';
@@ -23,7 +40,10 @@ import { Servico } from 'src/models/Servico';
 const ListarServicos = () => {
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [colunasVisiveis, setColunasVisiveis] = useState({
-    nome: true, id: true, valor_servico: true, status_servico: true
+    nome: true,
+    id: true,
+    valor_servico: true,
+    status_servico: true
   });
   const [abrirCaixa, setAbrirCaixa] = useState(false);
   const [infoMessage, setInfoMessage] = useState('');
@@ -150,7 +170,10 @@ const ListarServicos = () => {
 
   return (
     <HelmetProvider>
-      <Helmet> <title>Lista dos Serviços</title> </Helmet>
+      <Helmet>
+        {' '}
+        <title>Lista dos Serviços</title>{' '}
+      </Helmet>
       <Navbar />
       <Box>
         <Box sx={stylesLista.headerServico}>
@@ -164,10 +187,16 @@ const ListarServicos = () => {
         </Box>
 
         <Box sx={stylesLista.buttons}>
-          <Button variant="contained" color="success" 
+          <Button
+            variant="contained"
+            color="success"
             size="large"
-            sx={{ textTransform: 'none', fontSize: '15px' }} onClick={handleAddServico}>
-            <AddCircleOutlineTwoTone sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }}/>
+            sx={{ textTransform: 'none', fontSize: '15px' }}
+            onClick={handleAddServico}
+          >
+            <AddCircleOutlineTwoTone
+              sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }}
+            />
             Adicionar
           </Button>
           <Button
@@ -175,8 +204,10 @@ const ListarServicos = () => {
             sx={{ backgroundColor: '#0c3c94', textTransform: 'none' }}
             onClick={handleAbrirCaixa}
           >
-            <SettingsTwoTone sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }} />
-              Gerenciar colunas
+            <SettingsTwoTone
+              sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }}
+            />
+            Gerenciar colunas
           </Button>
 
           <Box sx={stylesLista.barraPesquisa}>
@@ -192,13 +223,20 @@ const ListarServicos = () => {
               }}
             />
             <Tooltip title="Pesquisar serviço" arrow>
-              <IconButton onClick={handlePesquisar} sx={stylesLista.pesquisaIcon}>
+              <IconButton
+                onClick={handlePesquisar}
+                sx={stylesLista.pesquisaIcon}
+              >
                 <SearchTwoTone />
               </IconButton>
             </Tooltip>
           </Box>
         </Box>
-        <Dialog PaperProps={{ sx: stylesLista.caixa }} open={abrirCaixa} onClose={handleFecharCaixa}>
+        <Dialog
+          PaperProps={{ sx: stylesLista.caixa }}
+          open={abrirCaixa}
+          onClose={handleFecharCaixa}
+        >
           <DialogTitle sx={stylesLista.tituloCaixa}>
             Gerenciar Colunas
           </DialogTitle>
@@ -218,7 +256,12 @@ const ListarServicos = () => {
             ))}
           </DialogContent>
           <DialogActions sx={stylesLista.actions}>
-            <Button sx={stylesLista.button} onClick={handleFecharCaixa} variant="contained" color="primary">
+            <Button
+              sx={stylesLista.button}
+              onClick={handleFecharCaixa}
+              variant="contained"
+              color="primary"
+            >
               Fechar
             </Button>
           </DialogActions>
@@ -227,9 +270,19 @@ const ListarServicos = () => {
         <Box sx={stylesLista.servicosList}>
           <Card sx={{ width: '100%', padding: '10px', boxShadow: 'none' }}>
             <TableContainer sx={stylesLista.tableContainer}>
-              <Table size="medium" aria-label="servicos table" sx={{ border: '2px solid #959494', borderRadius: '20px' }}>
+              <Table
+                size="medium"
+                aria-label="servicos table"
+                sx={{ border: '2px solid #959494', borderRadius: '20px' }}
+              >
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: '#DCDDDE', width: '100%', alignItems: 'center' }} >
+                  <TableRow
+                    sx={{
+                      backgroundColor: '#DCDDDE',
+                      width: '100%',
+                      alignItems: 'center'
+                    }}
+                  >
                     {colunasVisiveis.nome && (
                       <TableCell sx={stylesLista.colunas}>NOME</TableCell>
                     )}
@@ -273,7 +326,9 @@ const ListarServicos = () => {
                         )}
                         {colunasVisiveis.valor_servico && (
                           <TableCell sx={stylesLista.linhas}>
-                            <Typography gutterBottom>{formatarValor(servico.valor_servico)}</Typography>
+                            <Typography gutterBottom>
+                              {formatarValor(servico.valor_servico)}
+                            </Typography>
                           </TableCell>
                         )}
                         {colunasVisiveis.status_servico && (
@@ -283,24 +338,46 @@ const ListarServicos = () => {
                             </Typography>
                           </TableCell>
                         )}
-                        <TableCell sx={{ borderBottom: '1px solid #959494', width: '20%' }} align="center">
+                        <TableCell
+                          sx={{
+                            borderBottom: '1px solid #959494',
+                            width: '20%'
+                          }}
+                          align="center"
+                        >
                           <Tooltip title="Editar serviço" arrow>
-                            <IconButton color="primary" size="small" onClick={() => handleEditar(servico.id)}>
+                            <IconButton
+                              color="primary"
+                              size="small"
+                              onClick={() => handleEditar(servico.id)}
+                            >
                               <EditTwoTone />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Visualizar serviço" arrow>
-                            <IconButton sx={{ color: '#424242' }} size="small" onClick={() => handleVisualizar(servico.id)}>
+                            <IconButton
+                              sx={{ color: '#424242' }}
+                              size="small"
+                              onClick={() => handleVisualizar(servico.id)}
+                            >
                               <VisibilityTwoTone />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Histórico do serviço" arrow>
-                            <IconButton color="primary" size="small" onClick={() => handleHistorico(servico.id)}>
+                            <IconButton
+                              color="primary"
+                              size="small"
+                              onClick={() => handleHistorico(servico.id)}
+                            >
                               <HistoryTwoTone />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Deletar serviço" arrow>
-                            <IconButton color="error" size="small" onClick={() => handleDelete(servico.id)}>
+                            <IconButton
+                              color="error"
+                              size="small"
+                              onClick={() => handleDelete(servico.id)}
+                            >
                               <DeleteTwoTone />
                             </IconButton>
                           </Tooltip>
@@ -324,10 +401,15 @@ const ListarServicos = () => {
         message={infoMessage}
         ContentProps={{
           sx: {
-            alignItems: 'center', justifyContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
             bgcolor:
               infoMessage === 'Serviço deletado com sucesso!' ? 'green' : 'red',
-            color: 'white', borderRadius: '5px', textAlign: 'center', fontSize: '16px', marginTop: '80px'
+            color: 'white',
+            borderRadius: '5px',
+            textAlign: 'center',
+            fontSize: '16px',
+            marginTop: '80px'
           }
         }}
       />

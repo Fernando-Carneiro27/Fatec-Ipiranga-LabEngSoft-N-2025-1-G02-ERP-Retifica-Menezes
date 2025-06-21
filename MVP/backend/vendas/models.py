@@ -26,7 +26,7 @@ class VendaItem(models.Model):
     quantidade = models.IntegerField(default=1)
     valor_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     descricao = models.CharField(max_length=100, blank=True, null=True)
-    
+    valor_total_itens = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     def save(self, *args, **kwargs):
         if not self.valor_unitario and self.produto:
             try:
@@ -60,7 +60,7 @@ class VendaServicoItem(models.Model):
     quantidade = models.IntegerField(default=1)
     valor_servico = models.DecimalField(max_digits=10, decimal_places=2)
     descricao = models.CharField(max_length=100, blank=True, null=True)
-
+    valor_total_itens = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     def save(self, *args, **kwargs):
         if not self.valor_servico and self.servico:
             self.valor_servico = self.servico.valor_servico

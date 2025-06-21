@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { ExpandLess, ExpandMore, Height } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import  stylesNav  from 'src/components/Navbar/stylesNavBar';
+import  stylesNav  from 'src/components/Navbar/stylesSideMenu';
 
 const Navbar: React.FC = () => {
   const [estaAtivo, setEstaAtivo] = useState(false);
@@ -202,7 +202,7 @@ const Navbar: React.FC = () => {
                   navigate('/venda-add');
                 }}
               >
-                <ListItemText sx={stylesNav.submenuItem} primary="Adicionar Venda" />
+                <ListItemText sx={stylesNav.submenuItem} primary="Registrar Venda" />
               </ListItemButton>
             </List>
           </Collapse>

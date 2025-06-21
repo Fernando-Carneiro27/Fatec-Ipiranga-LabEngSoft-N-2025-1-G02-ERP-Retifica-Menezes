@@ -16,7 +16,6 @@ const stylesEditar = {
     headerServicoImg: {
       marginLeft: '25px',
       marginRight: '8px',
-      width: '100',
       height: '20px'
     },
     headerServicoSpan: {
@@ -51,11 +50,10 @@ const stylesEditar = {
       padding: '15px',
       borderRadius: '8px',
       display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
-      alignItems: 'flexstart',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
       gap: '20px',
       flex: 1,
-      flexwrap: 'wrap',
+      flexWrap: 'wrap',
       margin: '0 1rem 0 1rem',
       '@media (max-width: 1000px)': {
         display: 'flex',
@@ -65,17 +63,6 @@ const stylesEditar = {
         gridTemplateColumns: 'repeat(0, 1fr)',
         width: '80%',
         height: 'auto',
-      }
-    },
-    formContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '10px',
-      marginleft: '10px',
-      '@media (max-width: 768px)': {
-        flexDirection: 'column',
-        gap: '15px',
-        marginLeft: '0'
       }
     },
     formGroup: {
@@ -91,9 +78,7 @@ const stylesEditar = {
           flexDirection: 'column',
           gap: '15px',
           width: '100%',
-          marginRight: '30px'
       },
-      width: '66%'
     },
     obsButtons: {
       display: 'flex',
@@ -175,5 +160,5 @@ const stylesEditar = {
       }
     },       
   };
-  
+
   export default stylesEditar;

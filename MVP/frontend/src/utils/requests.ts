@@ -3,7 +3,7 @@ import {
     Estoque, EstoqueCreate, EstoqueUpdate,
     Produto, ProdutoUpdate, Movimentacao
 } from "src/models/Produto";
-import { ApiGetServico, ApiGetServicos, Servico, ServicoUpdate } from "src/models/Servico"
+import { ApiGetServico, ApiGetServicos, Servico, ServicoCreate, ServicoUpdate } from "src/models/Servico"
 import { useApi } from "./api";
 import { ApiGetClientes, ApiGetCliente, Cliente, ClienteUpdate } from "src/models/Cliente";
 import { ApiGetVendaProduto, ApiGetVendasProduto, VendaProduto, VendaProdutoUpdate } from "src/models/VendaProduto";
@@ -118,7 +118,7 @@ const getUmServico = async (id: number) => {
     return response
 }
 
-const addServico = async (data: Servico) => {
+const addServico = async (data: ServicoCreate) => {
     const response = await useApi('servicos', 'POST', data)
     return response
 }

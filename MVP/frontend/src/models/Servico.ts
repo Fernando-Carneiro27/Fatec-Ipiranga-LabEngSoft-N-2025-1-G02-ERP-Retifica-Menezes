@@ -1,5 +1,15 @@
 import { Produto } from "./Produto";
 
+export type ProdutoServicoItem = {
+  produto_id: number;
+  quantidade_utilizada: number;
+};
+export type ProdutoServicoDetalhado = {
+  produto_id: number;
+  quantidade_utilizada: number;
+  nome: string;
+  valor: number;
+};
 export type Servico = {
     id?: number;
     nome: string;
@@ -10,16 +20,23 @@ export type Servico = {
     historico_valor_servico?: number[];
     historico_data_modificacao?: string[];
     produtos?: Produto[];
-    produtos_ids?: number[];
+    itens_detalhados?: ProdutoServicoDetalhado[];
 };
+export interface ServicoCreate {
+  nome: string;
+  valor_servico: number;
+  status_servico: string;
+  descricao_servico: string;
+  data_modificacao_servico: string;
+  itens: ProdutoServicoItem[]; 
+}
 export interface ServicoUpdate {
     nome?: string;
     valor_servico?: number;
     status_servico?: string;
     descricao_servico?: string;
     data_modificacao_servico?: string;
-    produtos?: Produto[];
-    produtos_ids?: number[];
+    itens?: ProdutoServicoItem[];
 }
 
 export type ServicoDetail = {

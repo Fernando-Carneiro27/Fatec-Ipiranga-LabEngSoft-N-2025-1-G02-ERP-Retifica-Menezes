@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Autocomplete,
   TextField,
@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { addVendaProduto, useRequests } from 'src/utils/requests';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate } from 'react-router';
 import stylesAdd from 'src/content/pages/Vendas/stylesAddVenda';
 import { Servico } from 'src/models/Servico';
@@ -22,7 +22,7 @@ import { Produto } from 'src/models/Produto';
 import { Cliente } from 'src/models/Cliente';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 
-const AdicionarVenda = () => {
+const RegistrarVenda = () => {
   const obterDataAtual = () => {
     const hoje = new Date();
     const ano = hoje.getFullYear();
@@ -44,6 +44,7 @@ const AdicionarVenda = () => {
     forma_pagamento: '',
     situacao_venda: '',
     status_pagamento: '',
+    detalhes_pagamento: '',
     valor_total: 0,
     itens_data: []
   });
@@ -58,6 +59,7 @@ const AdicionarVenda = () => {
     forma_pagamento: '',
     situacao_venda: '',
     status_pagamento: '',
+    detalhes_pagamento: '',
     valor_total: 0,
     itens_data: []
   });
@@ -69,15 +71,18 @@ const AdicionarVenda = () => {
   const [abrirAviso, setAbrirAviso] = useState(false);
   const [listaProdutos, setListaProdutos] = useState<Produto[]>([]);
   const [listaClientes, setListaClientes] = useState<Cliente[]>([]);
-  const [listaServicos, setListaServicos] = useState<Servico[]>([]);
-  const [descontosServicos, setDescontosServicos] = useState<
-    Record<string, number>
-  >({});
-  const [descontosProdutos, setDescontosProdutos] = useState<
-    Record<string, number>
-  >({});
-  const [descontoTotal, setDescontoTotal] = useState<number>(0);
   const [formaPagamento, setFormaPagamento] = useState<string>('');
+  const [listaServicos, setListaServicos] = useState<Servico[]>([]);
+  const [vendaProdutoSucesso, setVendaProdutoSucesso] = useState(false);
+  const [vendaServicoSucesso, setVendaServicoSucesso] = useState(false);
+  const [descontosServicos, setDescontosServicos] = useState<{
+    [key: number]: number;
+  }>({});
+  const [descontosProdutos, setDescontosProdutos] = useState<{
+    [key: number]: number;
+  }>({});
+  const [descontoTotal, setDescontoTotal] = useState<number>(0);
+
   useEffect(() => {
     const dataHoje = new Date().toLocaleDateString('en-CA');
     setVendaServicoData((prev) => ({
@@ -113,6 +118,7 @@ const AdicionarVenda = () => {
     };
     obterClientes();
   }, []);
+
   useEffect(() => {
     const obterServicos = async () => {
       try {
@@ -157,7 +163,14 @@ const AdicionarVenda = () => {
     if (!itensPreenchidos && !outroItensPreenchidos) {
       erros['itens_data'] = 'Adicione pelo menos um produto ou serviço';
     }
-
+    if (
+      outroTipoItens.some(
+        (item) => item.quantidade <= 0 || item.valor_total_itens <= 0
+      )
+    ) {
+      erros['itens_data'] =
+        'Todos os itens devem ter quantidade e subtotal válidos';
+    }
     return erros;
   };
 
@@ -195,69 +208,82 @@ const AdicionarVenda = () => {
   const handleRemoverItemServico = (itemIndex: number) => {
     setVendasServicosItens((prev) => prev.filter((_, i) => i !== itemIndex));
   };
-
+  const definirMensagemSucesso = (
+    produto: boolean,
+    servico: boolean
+  ): string => {
+    if (produto && servico) {
+      return 'Venda de produto e serviço cadastradas com sucesso!';
+    }
+    if (produto) return 'Venda de produto cadastrada com sucesso!';
+    if (servico) return 'Venda de serviço cadastrada com sucesso!';
+    return 'Venda cadastrada com sucesso!';
+  };
   const handleEnviarVendasServicos = async () => {
     if (!clienteSelecionado) {
       exibirAviso('Selecione um cliente para a venda!');
       return;
     }
+
+    const itensCalculados = vendasServicosItens.map((item) => {
+      const idServico = item.servico.id;
+      const desconto = descontosServicos[idServico] || 0;
+      const subtotal = item.quantidade * item.valor_unitario;
+      const valorTotalItem = subtotal * (1 - desconto / 100);
+
+      return {
+        servico_id: idServico,
+        quantidade: item.quantidade,
+        valor_servico: Number(item.valor_unitario.toFixed(2)),
+        descricao: item.descricao ?? '',
+        desconto,
+        valor_total_itens: Number(valorTotalItem.toFixed(2))
+      };
+    });
+
+    const somaItens = itensCalculados.reduce(
+      (total, item) => total + item.valor_total_itens,
+      0
+    );
+
+    const valorTotalComDesconto = somaItens * (1 - descontoTotal / 100);
+
     const vendaComData: any = {
       ...vendaServicoData,
       cliente_id: clienteSelecionado.id,
       data_venda:
         vendaServicoData.data_venda || new Date().toISOString().split('T')[0],
-      valor_total: Number(vendaServicoData.valor_total.toFixed(2)),
-      itens_data: vendasServicosItens.map((item) => ({
-        servico_id: item.servico.id,
-        quantidade: item.quantidade,
-        valor_servico: Number(item.valor_unitario.toFixed(2)),
-        descricao: item.descricao ?? ''
-      }))
+      valor_total: Number(valorTotalComDesconto.toFixed(2)),
+      itens_data: itensCalculados,
+      desconto_total: descontoTotal
     };
-    if (!vendaComData.data_pagamento) {
-      delete vendaComData.data_pagamento;
-    }
+
+    if (!vendaComData.data_pagamento) delete vendaComData.data_pagamento;
+
     const errosServico = validarCamposObrigatorios(
       vendaComData,
       'servico',
       vendasServicosItens
     );
-    if (Object.keys(errosServico).length > 0) {
-      setInfoMessage('Por favor, preencha todos os campos obrigatórios.');
-      setAbrirAviso(true);
+    if (Object.keys(errosServico).length) {
       setErros(errosServico);
+      exibirAviso('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
-    try {
-      console.log('Dados enviados:', vendaComData);
 
+    try {
       const response = await addVendaServico(vendaComData);
-      if (response?.errors) {
-        const apiErrors = response.errors;
-        const formattedErrors: Record<string, string> = {};
-        Object.keys(apiErrors).forEach((campo) => {
-          formattedErrors[campo] = apiErrors[campo].join(', ');
-        });
-        setErros(formattedErrors);
-        setInfoMessage(
-          'Erro ao adicionar venda. Verifique os campos com atenção.'
-        );
-        setAbrirAviso(true);
-        return;
-      }
-    } catch (error) {
-      console.error(error);
-      setInfoMessage('Erro inesperado. Tente novamente.');
+      if (response?.errors) throw new Error(JSON.stringify(response.errors));
+
+      setVendaServicoSucesso(true);
+      setInfoMessage(definirMensagemSucesso(vendaProdutoSucesso, true));
       setAbrirAviso(true);
-      return;
+      handleCancelar();
+    } catch (err) {
+      console.error(err);
+      setInfoMessage('Erro ao adicionar venda. Verifique os campos.');
+      setAbrirAviso(true);
     }
-    handleCancelar();
-    setTimeout(() => {
-      navigate('/vendas');
-    }, 2000);
-    setInfoMessage('Toda(s) a(s) venda(s) cadastradas com sucesso!');
-    setAbrirAviso(true);
-    setErros({});
   };
 
   const handleEnviarVendaProduto = async () => {
@@ -265,61 +291,68 @@ const AdicionarVenda = () => {
       exibirAviso('Selecione um cliente para a venda!');
       return;
     }
+
+    const itensCalculados = vendasProdutosItens.map((item) => {
+      const idProduto = item.produto.id;
+      const desconto = descontosProdutos[idProduto] || 0;
+      const subtotal = item.quantidade * item.valor_unitario;
+      const valorTotalItem = subtotal * (1 - desconto / 100);
+
+      return {
+        produto_id: idProduto,
+        quantidade: item.quantidade,
+        valor_unitario: item.valor_unitario,
+        descricao: item.descricao ?? '',
+        desconto,
+        valor_total_itens: Number(valorTotalItem.toFixed(2))
+      };
+    });
+
+    const somaItens = itensCalculados.reduce(
+      (total, item) => total + item.valor_total_itens,
+      0
+    );
+
+    const valorTotalComDesconto = somaItens * (1 - descontoTotal / 100);
+
     const vendaComData: any = {
       ...vendaProdutoData,
       cliente_id: clienteSelecionado.id,
       data_venda:
         vendaProdutoData.data_venda || new Date().toISOString().split('T')[0],
-      itens_data: vendasProdutosItens.map((item) => ({
-        produto_id: item.produto.id,
-        quantidade: item.quantidade,
-        valor_unitario: item.produto.estoque?.valor_produto_venda ?? 0,
-        descricao: item.descricao ?? ''
-      }))
+      valor_total: Number(valorTotalComDesconto.toFixed(2)),
+      itens_data: itensCalculados,
+      desconto_total: descontoTotal
     };
+
+    if (!vendaComData.data_pagamento) delete vendaComData.data_pagamento;
 
     const errosProduto = validarCamposObrigatorios(
       vendaComData,
       'produto',
       vendasProdutosItens
     );
-    if (!vendaComData.data_pagamento) {
-      delete vendaComData.data_pagamento;
-    }
-    if (Object.keys(errosProduto).length > 0) {
-      setInfoMessage('Por favor, preencha todos os campos obrigatórios.');
-      setAbrirAviso(true);
+    if (Object.keys(errosProduto).length) {
+      setErros(errosProduto);
+      exibirAviso('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
+
     try {
-      console.log('Dados antes do envio:', vendaComData);
-
       const response = await addVendaProduto(vendaComData);
+      if (response?.errors) throw new Error(JSON.stringify(response.errors));
 
-      if (response?.errors) {
-        console.log('Enviando:', vendaComData);
-        const apiErrors = response.errors;
-        const formattedErrors: Record<string, string> = {};
-        Object.keys(apiErrors).forEach((campo) => {
-          formattedErrors[campo] = apiErrors[campo].join(', ');
-        });
-        setErros(formattedErrors);
-        setInfoMessage(
-          'Erro ao adicionar venda de produto. Verifique os campos destacados.'
-        );
-        setAbrirAviso(true);
-        return;
-      }
-      setInfoMessage('Toda(s) a(s) venda(s) cadastradas com sucesso!');
+      setVendaProdutoSucesso(true);
+      setInfoMessage(definirMensagemSucesso(true, vendaServicoSucesso));
       setAbrirAviso(true);
       handleCancelar();
-      setErros({});
-    } catch (error) {
-      console.error(error);
-      setInfoMessage('Erro inesperado. Tente novamente.');
+    } catch (err) {
+      console.error(err);
+      setInfoMessage('Erro ao adicionar venda de produto.');
       setAbrirAviso(true);
     }
   };
+
   const exibirAviso = (mensagem: string) => {
     setInfoMessage(mensagem);
     setAbrirAviso(true);
@@ -333,6 +366,7 @@ const AdicionarVenda = () => {
       forma_pagamento: '',
       situacao_venda: '',
       status_pagamento: '',
+      detalhes_pagamento: '',
       valor_total: 0,
       itens_data: []
     });
@@ -354,8 +388,10 @@ const AdicionarVenda = () => {
     setDescontoTotal(0);
     setFormaPagamento('');
     setTimeout(() => {
-      window.history.back();
+      navigate('/vendas');
     }, 2500);
+    setVendaProdutoSucesso(false);
+    setVendaServicoSucesso(false);
   };
   const handleFecharAviso = () => {
     setAbrirAviso(false);
@@ -482,6 +518,7 @@ const AdicionarVenda = () => {
             <Autocomplete<Cliente>
               options={listaClientes}
               getOptionLabel={(option: Cliente) => option.nome}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
               value={clienteSelecionado}
               onChange={(event, newValue) => {
                 if (newValue && typeof newValue !== 'string') {
@@ -620,7 +657,7 @@ const AdicionarVenda = () => {
                       {
                         servico: servicoInicial,
                         descricao: '',
-                        quantidade: 0,
+                        quantidade: 1,
                         valor_unitario: 0
                       }
                     ])
@@ -638,6 +675,7 @@ const AdicionarVenda = () => {
                     itemServico.quantidade * itemServico.valor_unitario;
                   const subtotalComDesconto =
                     subtotalBruto * (1 - desconto / 100);
+
                   return (
                     <Box
                       key={itemIndex}
@@ -650,17 +688,26 @@ const AdicionarVenda = () => {
                           option?.id === value?.id
                         }
                         value={
-                          listaServicos.find(
-                            (s) => s.id === itemServico.servico?.id
-                          ) ?? null
+                          itemServico.servico && itemServico.servico.id
+                            ? listaServicos.find(
+                                (s) => s.id === itemServico.servico.id
+                              ) ?? null
+                            : null
                         }
                         onChange={(event, newValue: Servico | null) => {
                           const atualiza = [...vendasServicosItens];
-                          atualiza[itemIndex].servico = newValue;
+                          atualiza[itemIndex].servico = newValue!;
                           atualiza[itemIndex].descricao =
                             newValue?.descricao_servico ?? '';
                           atualiza[itemIndex].valor_unitario =
                             newValue?.valor_servico ?? 0;
+                          atualiza[itemIndex].valor_total_itens =
+                            (atualiza[itemIndex].quantidade ?? 0) *
+                            (newValue?.valor_servico ?? 0) *
+                            (1 -
+                              (descontosServicos[newValue?.id ?? 0] ?? 0) /
+                                100);
+
                           setVendasServicosItens(atualiza);
                         }}
                         renderInput={(params) => (
@@ -673,6 +720,7 @@ const AdicionarVenda = () => {
                           />
                         )}
                       />
+
                       <TextField
                         label="Observação do serviço"
                         variant="outlined"
@@ -680,6 +728,10 @@ const AdicionarVenda = () => {
                         fullWidth
                         value={itemServico.descricao}
                         sx={stylesAdd.formGroup}
+                        name="descricao"
+                        onChange={(e) =>
+                          handleMudancaVendaServico(itemIndex, e)
+                        }
                       />
 
                       <TextField
@@ -687,21 +739,27 @@ const AdicionarVenda = () => {
                         type="number"
                         variant="outlined"
                         fullWidth
+                        name="quantidade"
                         value={
                           itemServico.quantidade === 0
                             ? ''
                             : itemServico.quantidade
                         }
                         onChange={(e) => {
+                          const valor = parseFloat(e.target.value) || 0;
                           const atualiza = [...vendasServicosItens];
-                          atualiza[itemIndex].quantidade =
-                            parseFloat(e.target.value) || 0;
+                          atualiza[itemIndex].quantidade = valor;
+                          const descontoAtual =
+                            descontosServicos[idServico] || 0;
+                          atualiza[itemIndex].valor_total_itens =
+                            valor *
+                            atualiza[itemIndex].valor_unitario *
+                            (1 - descontoAtual / 100);
                           setVendasServicosItens(atualiza);
                         }}
                         sx={{ ...stylesAdd.formGroup, maxWidth: '90px' }}
                         InputLabelProps={{ shrink: true }}
                       />
-
                       <TextField
                         label="Valor unitário"
                         type="number"
@@ -722,11 +780,7 @@ const AdicionarVenda = () => {
                             <InputAdornment position="end">%</InputAdornment>
                           )
                         }}
-                        value={
-                          descontosServicos[idServico] === 0
-                            ? ''
-                            : descontosServicos[idServico]
-                        }
+                        value={desconto === 0 ? '' : desconto}
                         onChange={(e) => {
                           const input = e.target.value;
                           const novoDesconto =
@@ -735,6 +789,17 @@ const AdicionarVenda = () => {
                             ...prev,
                             [idServico]: novoDesconto
                           }));
+
+                          const atualiza = [...vendasServicosItens];
+                          const quantidadeAtual =
+                            atualiza[itemIndex].quantidade || 0;
+                          const valorUnitarioAtual =
+                            atualiza[itemIndex].valor_unitario || 0;
+                          atualiza[itemIndex].valor_total_itens =
+                            quantidadeAtual *
+                            valorUnitarioAtual *
+                            (1 - novoDesconto / 100);
+                          setVendasServicosItens(atualiza);
                         }}
                         sx={{ ...stylesAdd.formGroup, maxWidth: '150px' }}
                       />
@@ -751,16 +816,9 @@ const AdicionarVenda = () => {
 
                       <Tooltip title="Excluir serviço" arrow>
                         <IconButton
-                          sx={{
-                            '&:hover': { backgroundColor: 'transparent' }
-                          }}
+                          sx={{ '&:hover': { backgroundColor: 'transparent' } }}
                           color="error"
-                          onClick={() => {
-                            const atualiza = vendasServicosItens.filter(
-                              (_, idx) => idx !== itemIndex
-                            );
-                            setVendasServicosItens(atualiza);
-                          }}
+                          onClick={() => handleRemoverItemServico(itemIndex)}
                           size="large"
                         >
                           <CancelRoundedIcon
@@ -775,6 +833,7 @@ const AdicionarVenda = () => {
                     </Box>
                   );
                 })}
+
                 <Button
                   variant="contained"
                   sx={stylesAdd.button}
@@ -785,7 +844,8 @@ const AdicionarVenda = () => {
                         servico: servicoInicial,
                         descricao: '',
                         quantidade: 1,
-                        valor_unitario: 0
+                        valor_unitario: 0,
+                        valor_total_itens: 0
                       }
                     ])
                   }
@@ -839,7 +899,7 @@ const AdicionarVenda = () => {
                       {
                         produto: produtoInicial,
                         descricao: '',
-                        quantidade: 0,
+                        quantidade: 1,
                         valor_unitario: 0
                       }
                     ])
@@ -857,7 +917,6 @@ const AdicionarVenda = () => {
                     itemProduto.quantidade * itemProduto.valor_unitario;
                   const subtotalComDesconto =
                     subtotalBruto * (1 - desconto / 100);
-
                   return (
                     <Box
                       key={itemIndex}
@@ -912,9 +971,16 @@ const AdicionarVenda = () => {
                             : itemProduto.quantidade
                         }
                         onChange={(e) => {
+                          const valor = parseFloat(e.target.value) || 0;
                           const atualiza = [...vendasProdutosItens];
-                          atualiza[itemIndex].quantidade =
-                            parseFloat(e.target.value) || 0;
+                          atualiza[itemIndex].quantidade = valor;
+                          const descontoAtual =
+                            descontosProdutos[idProduto] || 0;
+                          const novoSubtotal =
+                            valor *
+                            atualiza[itemIndex].valor_unitario *
+                            (1 - descontoAtual / 100);
+                          atualiza[itemIndex].valor_total_itens = novoSubtotal;
                           setVendasProdutosItens(atualiza);
                         }}
                         sx={{ ...stylesAdd.formGroup, maxWidth: '90px' }}
@@ -954,6 +1020,18 @@ const AdicionarVenda = () => {
                             ...prev,
                             [idProduto]: novoDesconto
                           }));
+
+                          const atualiza = [...vendasProdutosItens];
+                          const quantidadeAtual =
+                            atualiza[itemIndex].quantidade || 0;
+                          const valorUnitarioAtual =
+                            atualiza[itemIndex].valor_unitario || 0;
+                          const novoSubtotal =
+                            quantidadeAtual *
+                            valorUnitarioAtual *
+                            (1 - novoDesconto / 100);
+                          atualiza[itemIndex].valor_total_itens = novoSubtotal;
+                          setVendasProdutosItens(atualiza);
                         }}
                         sx={{ ...stylesAdd.formGroup, maxWidth: '150px' }}
                       />
@@ -1000,7 +1078,8 @@ const AdicionarVenda = () => {
                         produto: produtoInicial,
                         descricao: '',
                         quantidade: 0,
-                        valor_unitario: 0
+                        valor_unitario: 0,
+                        valor_total_itens: 0
                       }
                     ])
                   }
@@ -1082,15 +1161,21 @@ const AdicionarVenda = () => {
               )}
             />
             <TextField
-              label="Observação da venda"
+              label="Observações"
               variant="outlined"
               disabled={desabilitarCampos}
               fullWidth
-              name="observacao"
+              name="detalhes_pagamento"
               onChange={(e) => {
                 const { value } = e.target;
-                setVendaServicoData((prev) => ({ ...prev, observacao: value }));
-                setVendaProdutoData((prev) => ({ ...prev, observacao: value }));
+                setVendaServicoData((prev) => ({
+                  ...prev,
+                  detalhes_pagamento: value
+                }));
+                setVendaProdutoData((prev) => ({
+                  ...prev,
+                  detalhes_pagamento: value
+                }));
               }}
               sx={stylesAdd.formGroup}
             />
@@ -1192,10 +1277,7 @@ const AdicionarVenda = () => {
               alignItems: 'center',
               justifyContent: 'center',
               marginTop: '50px',
-              bgcolor:
-                infoMessage === 'Toda(s) a(s) venda(s) cadastradas com sucesso!'
-                  ? 'green'
-                  : 'red',
+              bgcolor: infoMessage.includes('sucesso') ? 'green' : 'red',
               color: 'white',
               textAlign: 'center',
               width: '100%',
@@ -1211,4 +1293,4 @@ const AdicionarVenda = () => {
   );
 };
 
-export default AdicionarVenda;
+export default RegistrarVenda;

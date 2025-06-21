@@ -13,6 +13,7 @@ export type VendaServicoItem = {
     quantidade: number;
     valor_unitario: number;
     descricao?: string;
+    valor_total_itens?: number;
     produtos_servico?: ProdutoServico[];
 };
 export type VendaServico = {

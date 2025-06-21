@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Typography, Card,
-  TableContainer, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Tooltip, Button,
-  Dialog, DialogTitle, DialogContent, FormControlLabel, Checkbox, DialogActions, TextField, Snackbar
+  Box,
+  Typography,
+  Card,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  IconButton,
+  Tooltip,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  FormControlLabel,
+  Checkbox,
+  DialogActions,
+  TextField,
+  Snackbar
 } from '@mui/material';
 import {
   AddCircleOutlineTwoTone,
@@ -13,7 +30,7 @@ import {
   SearchTwoTone
 } from '@mui/icons-material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate } from 'react-router';
 import { useRequests } from 'src/utils/requests';
 import { Cliente } from 'src/models/Cliente';
@@ -22,9 +39,15 @@ import stylesLista from 'src/content/pages/Clientes/stylesListarClientes';
 const ListarClientes = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [colunasVisiveis, setColunasVisiveis] = useState({
-    nome: true, cpf_cnpj: true, email: true,
-    telefone: true, bairro: true, cep: true,
-    endereco: true, status_cliente: true, observacao: true
+    nome: true,
+    cpf_cnpj: true,
+    email: true,
+    telefone: true,
+    bairro: true,
+    cep: true,
+    endereco: true,
+    status_cliente: true,
+    observacao: true
   });
   const [abrirCaixa, setAbrirCaixa] = useState(false);
   const [infoMessage, setInfoMessage] = useState('');
@@ -92,9 +115,15 @@ const ListarClientes = () => {
   };
   const formatarNomes = (coluna: string) => {
     const mapColunas = {
-      nome: 'Nome', cpf_cnpj: 'CPF/CNPJ', email: 'Email',
-      telefone: 'Telefone', bairro: 'Bairro', cep: 'CEP',
-      endereco: 'Endereço', status_cliente: 'Status', observacao: 'Observação'
+      nome: 'Nome',
+      cpf_cnpj: 'CPF/CNPJ',
+      email: 'Email',
+      telefone: 'Telefone',
+      bairro: 'Bairro',
+      cep: 'CEP',
+      endereco: 'Endereço',
+      status_cliente: 'Status',
+      observacao: 'Observação'
     };
     return mapColunas[coluna] || coluna;
   };
@@ -121,7 +150,10 @@ const ListarClientes = () => {
 
   return (
     <HelmetProvider>
-      <Helmet> <title>Lista dos Clientes</title> </Helmet>
+      <Helmet>
+        {' '}
+        <title>Lista dos Clientes</title>{' '}
+      </Helmet>
       <Navbar />
       <Box>
         <Box sx={stylesLista.headerCliente}>
@@ -135,15 +167,27 @@ const ListarClientes = () => {
         </Box>
 
         <Box sx={stylesLista.buttons}>
-          <Button variant="contained" color="success" 
+          <Button
+            variant="contained"
+            color="success"
             size="large"
-            sx={{ textTransform: 'none', fontSize: '15px' }} onClick={handleAddCliente}>
-            <AddCircleOutlineTwoTone sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }} />
+            sx={{ textTransform: 'none', fontSize: '15px' }}
+            onClick={handleAddCliente}
+          >
+            <AddCircleOutlineTwoTone
+              sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }}
+            />
             Adicionar
           </Button>
-          <Button variant="contained" sx={{ backgroundColor: '#0c3c94', textTransform: 'none' }} onClick={handleAbrirCaixa}>
-            <SettingsTwoTone sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }}/>
-              Gerenciar colunas
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: '#0c3c94', textTransform: 'none' }}
+            onClick={handleAbrirCaixa}
+          >
+            <SettingsTwoTone
+              sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }}
+            />
+            Gerenciar colunas
           </Button>
 
           <Box sx={stylesLista.barraPesquisa}>
@@ -159,7 +203,10 @@ const ListarClientes = () => {
               }}
             />
             <Tooltip title="Pesquisar cliente" arrow>
-              <IconButton onClick={handlePesquisar} sx={stylesLista.pesquisaIcon}>
+              <IconButton
+                onClick={handlePesquisar}
+                sx={stylesLista.pesquisaIcon}
+              >
                 <SearchTwoTone />
               </IconButton>
             </Tooltip>
@@ -209,7 +256,13 @@ const ListarClientes = () => {
                 sx={{ border: '2px solid #959494', borderRadius: '20px' }}
               >
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: '#DCDDDE', width: '100%', alignItems: 'center' }}>
+                  <TableRow
+                    sx={{
+                      backgroundColor: '#DCDDDE',
+                      width: '100%',
+                      alignItems: 'center'
+                    }}
+                  >
                     {colunasVisiveis.nome && (
                       <TableCell sx={stylesLista.colunas}>NOME</TableCell>
                     )}
@@ -235,7 +288,9 @@ const ListarClientes = () => {
                       <TableCell sx={stylesLista.colunas}>STATUS</TableCell>
                     )}
                     {colunasVisiveis.observacao && (
-                      <TableCell sx={stylesLista.colunas}>OBSERVAÇÕES</TableCell>
+                      <TableCell sx={stylesLista.colunas}>
+                        OBSERVAÇÕES
+                      </TableCell>
                     )}
                     <TableCell sx={stylesLista.colunas}>AÇÕES</TableCell>
                   </TableRow>

@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Button, CircularProgress, Typography } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Button,
+  CircularProgress,
+  Typography
+} from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useRequests } from 'src/utils/requests';
 import stylesServico from 'src/content/pages/Servicos/stylesDetalhesServico';
 import { Servico } from 'src/models/Servico';
@@ -10,20 +20,13 @@ import { Produto } from 'src/models/Produto';
 
 const DetalhesServico = () => {
   const { id } = useParams();
-  const [infoMessage, setInfoMessage] = useState('');
-  const [servicoData, setServicoData] = useState<Servico>({
-    nome: '',
-    valor_servico: 0,
-    status_servico: '',
-    descricao_servico: '',
-    data_modificacao_servico: '',
-    produtos: [],
-    produtos_ids: []
-  });
+  const [servicoData, setServicoData] = useState<Servico | null>(null);
+  const [produtosSelecionados, setProdutosSelecionados] = useState<
+    { produto: Produto; quantidade: number }[]
+  >([]);
   const { getUmServico, getProdutos } = useRequests();
-  const [produtoId, setProdutoId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [listaProdutos, setListaProdutos] = useState<Produto[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -33,26 +36,28 @@ const DetalhesServico = () => {
           getProdutos()
         ]);
 
-        const servicoDetail = respServico?.data;
-        const servico = servicoDetail.servico;
-        const produtos = respProdutos?.data?.produto ?? [];
-        setListaProdutos(produtos);
+        const servico: Servico = respServico?.data?.servico;
+        const produtos: Produto[] = respProdutos?.data?.produto ?? [];
 
-        const servicoComProdutos: Servico = {
-          ...servico,
-          produtos: servico.produtos,
-          produtos_ids: servico.produtos.map((p: Produto) => p.id)
-        };
+        const selecionados = (servico.itens_detalhados ?? [])
+          .map((item) => {
+            const produto = produtos.find((p) => p.id === item.produto_id);
+            return produto
+              ? { produto, quantidade: item.quantidade_utilizada }
+              : null;
+          })
+          .filter(Boolean) as { produto: Produto; quantidade: number }[];
 
-        setServicoData(servicoComProdutos);
-        setLoading(false);
+        setProdutosSelecionados(selecionados);
+        setServicoData(servico);
       } catch (error) {
         console.error('Erro ao carregar dados do serviço e produtos:', error);
+      } finally {
+        setLoading(false);
       }
     };
-
     carregarDados();
-  }, [id]);
+  }, [id, getUmServico, getProdutos]);
   const formatarValor = (valor: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -64,7 +69,14 @@ const DetalhesServico = () => {
 
   if (loading || !servicoData)
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -82,7 +94,9 @@ const DetalhesServico = () => {
           alt="Ícone Visualizar"
           sx={stylesServico.headerServicoImg}
         />
-        <Typography sx={stylesServico.headerServicoSpan}> Serviço - Visualizar dados </Typography>
+        <Typography sx={stylesServico.headerServicoSpan}>
+          Serviço - Visualizar dados
+        </Typography>
       </Box>
 
       <Box sx={stylesServico.servicosDetalhes}>
@@ -93,7 +107,7 @@ const DetalhesServico = () => {
         </Box>
 
         <TableContainer>
-          <Table size="small" aria-label="detalhes do produto">
+          <Table size="small" aria-label="detalhes do serviço">
             <TableBody>
               <TableRow>
                 <TableCell sx={stylesServico.campoTitulo}>Nome</TableCell>
@@ -104,9 +118,9 @@ const DetalhesServico = () => {
               <TableRow>
                 <TableCell sx={stylesServico.campoTitulo}>Produtos</TableCell>
                 <TableCell sx={stylesServico.campoValor}>
-                  {servicoData.produtos.length > 0
-                    ? servicoData.produtos
-                        .map((produto) => produto.nome)
+                  {produtosSelecionados.length > 0
+                    ? produtosSelecionados
+                        .map((p) => `${p.produto.nome} (x${p.quantidade})`)
                         .join(', ')
                     : 'Nenhum produto associado a este serviço.'}
                 </TableCell>
@@ -141,9 +155,10 @@ const DetalhesServico = () => {
           <Button
             onClick={() => {
               setTimeout(() => {
-                window.history.back();
+                navigate('/servicos');
               }, 2500);
-            }}>
+            }}
+          >
             Voltar
           </Button>
         </Box>

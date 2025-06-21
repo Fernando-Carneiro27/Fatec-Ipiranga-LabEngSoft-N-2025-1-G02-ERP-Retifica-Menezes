@@ -13,7 +13,7 @@ import {
   TableHead
 } from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useRequests } from 'src/utils/requests';
 import stylesHistorico from 'src/content/pages/Servicos/stylesHistoricoPreco';
 import { Servico } from 'src/models/Servico';

@@ -1,9 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Box, Typography, Card,
-  TableContainer, Table, TableHead, TableRow, TableCell, TableBody,
-  IconButton, Tooltip, Button,
-  Dialog, DialogTitle, DialogContent, FormControlLabel, Checkbox, DialogActions, TextField, Snackbar
+  Box,
+  Typography,
+  Card,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  IconButton,
+  Tooltip,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  FormControlLabel,
+  Checkbox,
+  DialogActions,
+  TextField,
+  Snackbar
 } from '@mui/material';
 import {
   AddCircleOutlineTwoTone,
@@ -15,7 +31,7 @@ import {
   HistoryTwoTone
 } from '@mui/icons-material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate } from 'react-router';
 import { useRequests } from 'src/utils/requests';
 import stylesLista from 'src/content/pages/Produtos/stylesListarProdutos';
@@ -25,7 +41,10 @@ import { Estoque } from 'src/models/Produto';
 const ListarProdutos = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [colunasVisiveis, setColunasVisiveis] = useState({
-    id: true, nome: true, descricao: true, valor_compra: true
+    id: true,
+    nome: true,
+    descricao: true,
+    valor_compra: true
   });
   const [abrirCaixa, setAbrirCaixa] = useState(false);
   const [infoMessage, setInfoMessage] = useState('');
@@ -151,7 +170,10 @@ const ListarProdutos = () => {
 
   return (
     <HelmetProvider>
-      <Helmet> <title>Lista dos Produtos</title> </Helmet>
+      <Helmet>
+        {' '}
+        <title>Lista dos Produtos</title>{' '}
+      </Helmet>
       <Navbar />
       <Box>
         <Box sx={stylesLista.headerProduto}>
@@ -165,11 +187,17 @@ const ListarProdutos = () => {
         </Box>
 
         <Box sx={stylesLista.buttons}>
-          <Button variant="contained" color="success" 
+          <Button
+            variant="contained"
+            color="success"
             size="large"
-            sx={{ textTransform: 'none', fontSize: '15px' }} onClick={handleAddProduto}>
-            <AddCircleOutlineTwoTone sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }} />
-              Adicionar
+            sx={{ textTransform: 'none', fontSize: '15px' }}
+            onClick={handleAddProduto}
+          >
+            <AddCircleOutlineTwoTone
+              sx={{ marginRight: '5px', color: 'white', fontSize: '20px' }}
+            />
+            Adicionar
           </Button>
           <Button
             variant="contained"
@@ -195,7 +223,10 @@ const ListarProdutos = () => {
               }}
             />
             <Tooltip title="Pesquisar produto" arrow>
-              <IconButton onClick={handlePesquisar} sx={stylesLista.pesquisaIcon}>
+              <IconButton
+                onClick={handlePesquisar}
+                sx={stylesLista.pesquisaIcon}
+              >
                 <SearchTwoTone />
               </IconButton>
             </Tooltip>
@@ -225,7 +256,12 @@ const ListarProdutos = () => {
             ))}
           </DialogContent>
           <DialogActions sx={stylesLista.actions}>
-            <Button sx={stylesLista.button} onClick={handleFecharCaixa} variant="contained" color="primary">
+            <Button
+              sx={stylesLista.button}
+              onClick={handleFecharCaixa}
+              variant="contained"
+              color="primary"
+            >
               Fechar
             </Button>
           </DialogActions>
@@ -234,9 +270,19 @@ const ListarProdutos = () => {
         <Box sx={stylesLista.produtosList}>
           <Card sx={{ width: '100%', padding: '10px', boxShadow: 'none' }}>
             <TableContainer sx={stylesLista.tableContainer}>
-              <Table size="medium" aria-label="produtos table" sx={{ border: '2px solid #959494', borderRadius: '20px' }}>
+              <Table
+                size="medium"
+                aria-label="produtos table"
+                sx={{ border: '2px solid #959494', borderRadius: '20px' }}
+              >
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: '#DCDDDE', width: '100%', alignItems: 'center' }} >
+                  <TableRow
+                    sx={{
+                      backgroundColor: '#DCDDDE',
+                      width: '100%',
+                      alignItems: 'center'
+                    }}
+                  >
                     {colunasVisiveis.nome && (
                       <TableCell sx={stylesLista.colunas}>NOME</TableCell>
                     )}
@@ -244,19 +290,26 @@ const ListarProdutos = () => {
                       <TableCell sx={stylesLista.colunas}>CÓDIGO</TableCell>
                     )}
                     {colunasVisiveis.valor_compra && (
-                      <TableCell sx={stylesLista.colunas}>VALOR DE COMPRA (R$)</TableCell>
+                      <TableCell sx={stylesLista.colunas}>
+                        VALOR DE COMPRA (R$)
+                      </TableCell>
                     )}
                     {colunasVisiveis.descricao && (
-                      <TableCell sx={stylesLista.colunas}>OBSERVAÇÕES</TableCell>
+                      <TableCell sx={stylesLista.colunas}>
+                        OBSERVAÇÕES
+                      </TableCell>
                     )}
                     <TableCell sx={stylesLista.colunas}>AÇÕES</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(produtosFiltrados.length > 0 ? produtosFiltrados : produtos).length === 0 ? (
+                  {(produtosFiltrados.length > 0 ? produtosFiltrados : produtos)
+                    .length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={9} align="center">
-                        <Typography gutterBottom>Nenhum produto encontrado.</Typography>
+                        <Typography gutterBottom>
+                          Nenhum produto encontrado.
+                        </Typography>
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -277,32 +330,62 @@ const ListarProdutos = () => {
                         )}
                         {colunasVisiveis.valor_compra && (
                           <TableCell sx={stylesLista.linhas}>
-                            <Typography gutterBottom>{formatarValor(produto.valor_compra)}</Typography>
+                            <Typography gutterBottom>
+                              {formatarValor(produto.valor_compra)}
+                            </Typography>
                           </TableCell>
                         )}
                         {colunasVisiveis.descricao && (
                           <TableCell sx={stylesLista.linhas}>
-                            <Typography gutterBottom>{produto.descricao}</Typography>
+                            <Typography gutterBottom>
+                              {produto.descricao}
+                            </Typography>
                           </TableCell>
                         )}
-                        <TableCell sx={{ borderBottom: '1px solid #959494', width: '20%' }} align="center">
+                        <TableCell
+                          sx={{
+                            borderBottom: '1px solid #959494',
+                            width: '20%'
+                          }}
+                          align="center"
+                        >
                           <Tooltip title="Editar produto" arrow>
-                            <IconButton color="primary" size="small" onClick={() => handleEditar(produto.estoque?.id)}>
+                            <IconButton
+                              color="primary"
+                              size="small"
+                              onClick={() => handleEditar(produto.estoque?.id)}
+                            >
                               <EditTwoTone />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Visualizar produto" arrow>
-                            <IconButton sx={{ color: '#424242' }} size="small" onClick={() => handleVisualizar(produto.estoque?.id)}>
+                            <IconButton
+                              sx={{ color: '#424242' }}
+                              size="small"
+                              onClick={() =>
+                                handleVisualizar(produto.estoque?.id)
+                              }
+                            >
                               <VisibilityTwoTone />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Histórico do produto" arrow>
-                            <IconButton color="primary" size="small" onClick={() => handleHistorico(produto.estoque?.id)}>
+                            <IconButton
+                              color="primary"
+                              size="small"
+                              onClick={() =>
+                                handleHistorico(produto.estoque?.id)
+                              }
+                            >
                               <HistoryTwoTone />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Deletar produto" arrow>
-                            <IconButton color="error" size="small" onClick={() => handleDelete(produto.id)}>
+                            <IconButton
+                              color="error"
+                              size="small"
+                              onClick={() => handleDelete(produto.id)}
+                            >
                               <DeleteTwoTone />
                             </IconButton>
                           </Tooltip>
@@ -327,10 +410,12 @@ const ListarProdutos = () => {
         ContentProps={{
           sx: {
             bgcolor:
-              infoMessage === 'Produto deletado com sucesso!'
-                ? 'green'
-                : 'red',
-            color: 'white', borderRadius: '5px', textAlign: 'center', fontSize: '16px', marginTop: '80px'
+              infoMessage === 'Produto deletado com sucesso!' ? 'green' : 'red',
+            color: 'white',
+            borderRadius: '5px',
+            textAlign: 'center',
+            fontSize: '16px',
+            marginTop: '80px'
           }
         }}
       />

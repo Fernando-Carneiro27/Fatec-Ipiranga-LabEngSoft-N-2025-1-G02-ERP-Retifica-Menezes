@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useRequests } from 'src/utils/requests';
 import stylesMovimentacao from 'src/content/pages/Estoque/stylesMovimentacaoEstoque';
 import { Movimentacao } from 'src/models/Produto';

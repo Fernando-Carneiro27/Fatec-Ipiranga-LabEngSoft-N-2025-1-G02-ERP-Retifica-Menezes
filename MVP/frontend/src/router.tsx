@@ -6,8 +6,8 @@ import Home from './content/pages/Home/Home';
 // Clientes
 import ListarClientes from './content/pages/Clientes/ListarClientes';
 import AdicionarCliente from './content/pages/Clientes/AddCliente';
-import DetalhesCliente from './content/pages/Clientes/DetalhesCliente'; 
-import EditarCliente from './content/pages/Clientes/EditarCliente'; 
+import DetalhesCliente from './content/pages/Clientes/DetalhesCliente';
+import EditarCliente from './content/pages/Clientes/EditarCliente';
 // Produtos
 import ListarProdutos from './content/pages/Produtos/ListarProdutos';
 import AdicionarProduto from './content/pages/Produtos/AddProduto';
@@ -26,7 +26,7 @@ import DetalhesServico from './content/pages/Servicos/DetalhesServico';
 import HistoricoServico from './content/pages/Servicos/HistoricoPreco';
 // Vendas
 import ListarVendas from './content/pages/Vendas/ListarVendas';
-import AdicionarVenda from './content/pages/Vendas/AddVenda';
+import RegistrarVenda from './content/pages/Vendas/AddVenda';
 import DetalhesVenda from './content/pages/Vendas/DetalhesVenda';
 
 const AppRouter: React.FC = () => {
@@ -35,22 +35,22 @@ const AppRouter: React.FC = () => {
       <Routes>
         <Route path="/" element={<LogIn />} />
         <Route path="/redefinir-senha" element={<EsqueciSenha />} />
-        <Route path='/home' element={< Home/>} />
+        <Route path="/home" element={<Home />} />
         {/* Clientes */}
         <Route path="/clientes" element={<ListarClientes />} />
         <Route path="/cliente/:id" element={<DetalhesCliente />} />
-        <Route path="/cliente-add" element={<AdicionarCliente />} /> 
+        <Route path="/cliente-add" element={<AdicionarCliente />} />
         <Route path="/cliente/editar/:id" element={<EditarCliente />} />
         {/* Produtos */}
         <Route path="/produtos" element={<ListarProdutos />} />
         <Route path="/produto/:id" element={<DetalhesProduto />} />
         <Route path="/produto-add" element={<AdicionarProduto />} />
         <Route path="/produto/editar/:id" element={<EditarProduto />} />
-        <Route path='/produto/historico/:id' element={<HistoricoPreco />} />
+        <Route path="/produto/historico/:id" element={<HistoricoPreco />} />
         {/* Estoque */}
-        <Route path='/estoque' element={<ListarEstoque />} />
-        <Route path='/gerenciar-estoque' element={<GerenciarEstoque />} />
-        <Route path='/movimentacao-estoque' element={<MovimentacaoEstoque />} />
+        <Route path="/estoque" element={<ListarEstoque />} />
+        <Route path="/gerenciar-estoque" element={<GerenciarEstoque />} />
+        <Route path="/movimentacao-estoque" element={<MovimentacaoEstoque />} />
         {/* Serviços */}
         <Route path="/servicos" element={<ListarServicos />} />
         <Route path="/servico/:id" element={<DetalhesServico />} />
@@ -59,7 +59,7 @@ const AppRouter: React.FC = () => {
         <Route path="/servico/historico/:id" element={<HistoricoServico />} />
         {/* Vendas */}
         <Route path="/vendas" element={<ListarVendas />} />
-        <Route path="/venda-add" element={<AdicionarVenda />} />
+        <Route path="/venda-add" element={<RegistrarVenda />} />
         <Route path="/venda/:id" element={<DetalhesVenda />} />
         {/* <Route path="/venda/editar/:id" element={<EditarVenda />} /> */}
       </Routes>

@@ -11,7 +11,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useRequests } from 'src/utils/requests';
 import { Cliente } from 'src/models/Cliente';
 import { PhotoCamera } from '@mui/icons-material';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate } from 'react-router';
 import stylesAdd from 'src/content/pages/Clientes/stylesAddCliente';
 

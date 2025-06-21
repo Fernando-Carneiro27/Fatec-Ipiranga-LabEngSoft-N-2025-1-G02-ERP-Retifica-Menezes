@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useRequests } from 'src/utils/requests';
-import Navbar from 'src/components/Navbar/NavBar';
+import Navbar from 'src/components/Navbar/SideMenu';
 import { useNavigate } from 'react-router';
 import stylesAdd from 'src/content/pages/Produtos/stylesAddProduto';
 import { Produto } from 'src/models/Produto';
